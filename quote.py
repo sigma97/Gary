@@ -11,4 +11,8 @@ quotes = {"Soggy Sig is when you drop your smoke in a puddle": "Flames",
           "What is this light hentai shit?": "Diamond",
           "My boy documents are sacred. No girl has ever touched them.": "Dom",
           "Hecc": "Hecc",
-          "I think that's illegal in... everywhere, really.": "Tallow"}
+          "I think that's illegal in... everywhere, really.": "Tallow",
+          "More like FlamesOnFurry": "Tallow",
+          "Get out of my yanky danky face fuck off will ya?": "Ama",
+          "I regret this place": "Odd",
+          "Noo, not the sandy vagina pit": "Diamond"}
