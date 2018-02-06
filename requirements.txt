@@ -1,4 +1,4 @@
-discord.py==1.0.0a1430+g881e598
+discord.py==1.0.0a1430
 aiohttp
 websockets
 chardet
