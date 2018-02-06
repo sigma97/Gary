@@ -1,1 +1,1 @@
-worker: python ShitBot.py
+worker: python3 ShitBot.py
