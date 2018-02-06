@@ -15,4 +15,8 @@ quotes = {"Soggy Sig is when you drop your smoke in a puddle": "Flames",
           "More like FlamesOnFurry": "Tallow",
           "Get out of my yanky danky face fuck off will ya?": "Ama",
           "I regret this place": "Odd",
-          "Noo, not the sandy vagina pit": "Diamond"}
+          "Noo, not the sandy vagina pit": "Diamond",
+          "If Jake Paul can do it you can do it": Flames,
+          "Lmoa Constrictor": "Flames",
+          "Don't try and test my fapping abilities": "Bounty",
+          'I mean everyone is into "the fuck"': "Frogger"}
