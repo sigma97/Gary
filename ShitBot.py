@@ -12,7 +12,7 @@ async def on_ready():
     print('Logged in as')
     print(bot.user)
     print('------')
-    await bot.change_presence(game=discord.Game(name='%quote'))
+    await bot.change_presence(game=discord.Game(name='%'))
 
 @bot.command()
 async def quote(ctx):
@@ -76,21 +76,42 @@ async def silver(ctx, arg):
     x = "https://img.pokemondb.net/sprites/silver/normal/" + arg + ".png"
     y = discord.Embed()
     y.set_image(url=x)
-    await ctx.send(embed = y)
+    if arg in pokemon:
+        if (int(pokemon[arg]) > 251):
+            await ctx.send("This Pokemon did not exist in Silver.")
+            return
+        await ctx.send(embed = y)
+    else:
+        await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
+
 
 @bot.command()
 async def gold(ctx, arg):
     x = "https://img.pokemondb.net/sprites/gold/normal/" + arg + ".png"
     y = discord.Embed()
     y.set_image(url=x)
-    await ctx.send(embed = y)
+    if arg in pokemon:
+        if (int(pokemon[arg]) > 251):
+            await ctx.send("This Pokemon did not exist in Gold.")
+            return
+        await ctx.send(embed = y)
+    else:
+        await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
+
 
 @bot.command()
 async def crystal(ctx, arg):
     x = "https://img.pokemondb.net/sprites/crystal/normal/" + arg + ".png"
     y = discord.Embed()
     y.set_image(url=x)
-    await ctx.send(embed = y)
+    if arg in pokemon:
+        if (int(pokemon[arg]) > 251):
+            await ctx.send("This Pokemon did not exist in Crystal.")
+            return
+        await ctx.send(embed = y)
+    else:
+        await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
+
 
 @bot.command()
 async def rse(ctx, arg):
