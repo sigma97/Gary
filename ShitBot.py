@@ -1,5 +1,4 @@
 import discord
-import asyncio
 from discord.ext import commands
 import random
 from quote import quotes
@@ -20,8 +19,11 @@ async def quote(ctx):
     x = random.choice(list(quotes.keys()))
     await ctx.send('"' + x + '" - ' + quotes[x])
 
+@bot.command()
+async def echo(ctx, *, arg):
+    await ctx.send(arg)
 
-## This section contains all of the code for sprites.
+## This section contains all of the code for generating sprites.
 
 @bot.command()
 async def pmd(ctx, arg):
