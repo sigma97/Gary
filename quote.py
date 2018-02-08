@@ -33,8 +33,9 @@ quotes = {"Soggy Sig is when you drop your smoke in a puddle": "Flames",
           "This is all heccs fault somehow.": "Flames",
           "I prefer the triple-dogdere": "Tallow",
           "dying is unhealthy for the brain": "Mango",
-          "we need this server to overload with gay": "Gary",
+          "we need this server to overload with gay": "Sig",
           "oh my god i can speak": "Gary",
           "The trick is to just not rp. That way nobody can hurt you.": "Tallow",
           "what the fuck": "Coco",
-          "can I be in your robot too": "Coco"}
+          "can I be in your robot too": "Coco",
+          "D-did they just “:p” me.": "Mawile"}
