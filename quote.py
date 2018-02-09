@@ -38,4 +38,6 @@ quotes = {"Soggy Sig is when you drop your smoke in a puddle": "Flames",
           "The trick is to just not rp. That way nobody can hurt you.": "Tallow",
           "what the fuck": "Coco",
           "can I be in your robot too": "Coco",
-          "D-did they just “:p” me.": "Mawile"}
+          "D-did they just “:p” me.": "Mawile",
+          "(っ˘̩╭╮˘̩)っ": "Minty",
+          "d=(´▽｀)=b": "Minty"}
