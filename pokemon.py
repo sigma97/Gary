@@ -49,4 +49,4 @@ pokemon = {"bulbasaur": 1, "ivysaur": 2, "venusaur": 3, "charmander": 4,
            "tyrogue": 236, "hitmontop": 237, "smoochum": 238, "elekid": 239, "magby": 240,
            "miltank": 241, "blissey": 242, "raikou": 243, "entei": 244, "suicune": 245,
            "larvitar": 246, "pupitar": 247, "tyranitar": 248, "lugia": 249, "ho-oh": 250,
-           "celebi": 251, "treecko": 252}
+           "celebi": 251, "treecko": 252, "grovyle": 253, "sceptile": 254}
