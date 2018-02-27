@@ -244,7 +244,7 @@ async def ama(ctx):
 
 @bot.command()
 async def bounty(ctx):
-    x = "https://play.pokemonshowdown.com/sprites/xyani/porygonz.gif"
+    x = "http://play.pokemonshowdown.com/sprites/xyani-shiny/porygon-z.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
