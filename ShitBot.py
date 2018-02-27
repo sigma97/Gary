@@ -3,9 +3,12 @@ from discord.ext import commands
 import random
 from quote import quotes
 from pokemon import pokemon
+import psycopg2
 
 client = discord.Client()
 bot = commands.Bot(command_prefix='%')
+conn = psycopg2.connect(dbname="quotes")
+cursor = conn.cursor()
 
 @bot.event
 async def on_ready():
@@ -16,8 +19,10 @@ async def on_ready():
 
 @bot.command()
 async def quote(ctx):
-    x = random.choice(list(quotes.keys()))
-    await ctx.send('"' + x + '" - ' + quotes[x])
+    cursor.execute("""SELECT * from quotes""")
+    rows = cursor.fetchall()
+    x = random.choice(rows)
+    await ctx.send('"' + x[1] + '" - ' + x[0])
 
 @bot.command()
 async def echo(ctx, *, arg):
