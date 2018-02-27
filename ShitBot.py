@@ -422,4 +422,11 @@ async def cones(ctx):
     y.set_image(url=x)
     await ctx.send(embed = y)
 
+@bot.command()
+async def coco(ctx):
+    x = "https://play.pokemonshowdown.com/sprites/xyani/plusle.gif"
+    y = discord.Embed()
+    y.set_image(url=x)
+    await ctx.send(embed = y)
+
 bot.run('NDEwMjM1NjgxMTA2MDM0Njg5.DVqNRA.5hICSESXedjhaue_vwXYu0JqVDY')
