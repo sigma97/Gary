@@ -207,7 +207,7 @@ async def odd(ctx):
 
 @bot.command()
 async def hecc(ctx):
-    x = "https://play.pokemonshowdown.com/sprites/xyani/gourgeist.gif"
+    x = "https://play.pokemonshowdown.com/sprites/xyani-shiny/gourgeist.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
@@ -368,7 +368,7 @@ async def gary(ctx):
 
 @bot.command()
 async def ivee(ctx):
-    x = "https://play.pokemonshowdown.com/sprites/xyani/sylveon.gif"
+    x = "https://play.pokemonshowdown.com/sprites/xyani/eevee.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
