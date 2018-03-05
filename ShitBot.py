@@ -4,6 +4,7 @@ import random
 from quote import quotes
 from pokemon import pokemon
 import psycopg2
+import urbandictionary as u
 
 client = discord.Client()
 bot = commands.Bot(command_prefix='%')
@@ -27,6 +28,21 @@ async def quote(ctx):
 @bot.command()
 async def echo(ctx, *, arg):
     await ctx.send(arg)
+
+@bot.command()
+async def ud(ctx, *args):
+    if (len(args) == 0):
+        temp = u.random()[0]
+        await ctx.send("**" + temp.word + "\n" + "**" + temp.definition)
+    else:
+        temp = u.define(args[0])
+        if (len(temp) == 0):
+            await ctx.send("This word or phrase could not be found on Urban Dictionary.")
+        else:
+            if (len(temp[0].definition) < 2000):
+                await ctx.send("**" + temp[0].word + "\n" + "**" + temp[0].definition)
+            else:
+                await ctx.send("This word's top definition is too long for Discord.")
 
 
 ## This section contains all of the code for generating sprites.
