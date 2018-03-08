@@ -17,7 +17,7 @@ async def on_ready():
     print('Logged in as')
     print(bot.user)
     print('------')
-    await bot.change_presence(game=discord.Game(name='%'))
+    await bot.change_presence(game=discord.Game(name='%help'))
 
 @bot.command()
 async def quote(ctx):
@@ -510,6 +510,13 @@ async def cones(ctx):
 @bot.command()
 async def coco(ctx):
     x = "https://play.pokemonshowdown.com/sprites/xyani/plusle.gif"
+    y = discord.Embed()
+    y.set_image(url=x)
+    await ctx.send(embed = y)
+
+@bot.command()
+async def kyro(ctx):
+    x = "https://play.pokemonshowdown.com/sprites/xyani/espurr.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
