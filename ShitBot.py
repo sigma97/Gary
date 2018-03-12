@@ -5,6 +5,7 @@ from quote import quotes
 from pokemon import pokemon
 import psycopg2
 import urbandictionary as u
+import esto as e
 
 client = discord.Client()
 bot = commands.Bot(command_prefix='%', pm_help=True)
@@ -31,10 +32,23 @@ quote.help = "Displays a random quote by a user in the server."
 
 @bot.command()
 async def echo(ctx, *, arg):
+    channel = bot.get_channel(422856288871907358)
+    echo_log = "**" + ctx.author.name + ":** " + arg
     await ctx.send(arg)
+    await channel.send(echo_log)
+    await ctx.message.delete()
 
 echo.brief = "Repeats the text inputted by the user."
 echo.help = "Repeats the text inputted by the user."
+
+@bot.command()
+async def vote(ctx, *, arg):
+    await ctx.message.add_reaction('👍')
+    await ctx.message.add_reaction('👎')
+    await ctx.message.add_reaction('🤔')
+
+vote.brief = "Adds voting reactions to message."
+vote.help = "Adds reactions to message to vote on a particular topic."
 
 @bot.command()
 async def ud(ctx, *args):
@@ -54,6 +68,19 @@ async def ud(ctx, *args):
 ud.usage = '"word or phrase"'
 ud.brief = "Returns an Urban Dictionary definition."
 ud.help = "Returns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition."
+
+@bot.command()
+@commands.is_nsfw()
+async def e621(ctx, *, args):
+    pic = e.getdata(args).file_url
+    if (pic == None):
+        await ctx.send("This image could not be found on E621.")
+    else:
+        x = discord.Embed()
+        x.set_image(url=pic)
+        await ctx.send(embed = x)
+
+
 
 ## This section contains all of the code for generating sprites.
 
@@ -517,6 +544,13 @@ async def coco(ctx):
 @bot.command()
 async def kyro(ctx):
     x = "https://play.pokemonshowdown.com/sprites/xyani/espurr.gif"
+    y = discord.Embed()
+    y.set_image(url=x)
+    await ctx.send(embed = y)
+
+@bot.command()
+async def snivez(ctx):
+    x = "https://play.pokemonshowdown.com/sprites/xyani/braixen.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
