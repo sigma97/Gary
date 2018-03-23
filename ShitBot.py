@@ -18,7 +18,7 @@ async def on_ready():
     print('Logged in as')
     print(bot.user)
     print('------')
-    await bot.change_presence(game=discord.Game(name='%help'))
+    await bot.change_presence(activity=discord.Game(name='%help'))
 
 @bot.command()
 async def quote(ctx):
@@ -72,9 +72,13 @@ ud.help = "Returns Urban Dictionary definition of supplied word. If no word is s
 @bot.command()
 @commands.is_nsfw()
 async def e621(ctx, *, args):
-    pic = e.getdata(args).file_url
+    if "random" in args:
+        args = args.replace("random", "")
+        pic = e.getdata(args + " order:random"+ " -type:swf").file_url
+    else:
+        pic = e.getdata(args + " -type:swf").file_url
     if (pic == None):
-        await ctx.send("This image could not be found on E621.")
+        await ctx.send("An image matching this query could not be found on E621.")
     else:
         x = discord.Embed()
         x.set_image(url=pic)
@@ -551,6 +555,13 @@ async def kyro(ctx):
 @bot.command()
 async def snivez(ctx):
     x = "https://play.pokemonshowdown.com/sprites/xyani/braixen.gif"
+    y = discord.Embed()
+    y.set_image(url=x)
+    await ctx.send(embed = y)
+
+@bot.command()
+async def sea(ctx):
+    x = "http://play.pokemonshowdown.com/sprites/xyani-shiny/litten.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
