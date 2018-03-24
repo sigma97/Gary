@@ -599,4 +599,11 @@ async def cross(ctx):
     y.set_image(url=x)
     await ctx.send(embed = y)
 
+@bot.command()
+async def fox(ctx):
+    x = "http://play.pokemonshowdown.com/sprites/xyani/ninetales.gif"
+    y = discord.Embed()
+    y.set_image(url=x)
+    await ctx.send(embed = y)
+
 bot.run('NDEwMjM1NjgxMTA2MDM0Njg5.DVqNRA.5hICSESXedjhaue_vwXYu0JqVDY')
