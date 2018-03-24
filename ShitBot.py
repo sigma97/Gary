@@ -86,7 +86,20 @@ async def e621(ctx, *, args):
 
 
 
-## This section contains all of the code for generating sprites.
+#################################################################
+#                                                               #
+#                                                               #
+#                                                               #
+#                                                               #
+# This section contains all of the code for generating sprites. #
+#                                                               #
+#                                                               #
+#                                                               #
+#                                                               #
+#################################################################
+
+
+
 
 @bot.command()
 async def pmd(ctx, arg):
@@ -291,7 +304,20 @@ async def xysm(ctx, arg):
     await ctx.send(embed = y)
 
 
-# The following section contains commands for each individual user
+
+####################################################################
+#                                                                  #
+#                                                                  #
+#                                                                  #
+#                                                                  #
+# The following section contains commands for each individual user #
+#                                                                  #
+#                                                                  #
+#                                                                  #
+#                                                                  #
+####################################################################
+
+
 
 @bot.command()
 async def sig(ctx):
@@ -393,7 +419,7 @@ async def cell(ctx):
 
 @bot.command()
 async def dragon(ctx):
-    x = "https://play.pokemonshowdown.com/sprites/xyani/latios.gif"
+    x = "https://play.pokemonshowdown.com/sprites/xyani-shiny/latios.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
@@ -562,6 +588,13 @@ async def snivez(ctx):
 @bot.command()
 async def sea(ctx):
     x = "http://play.pokemonshowdown.com/sprites/xyani-shiny/litten.gif"
+    y = discord.Embed()
+    y.set_image(url=x)
+    await ctx.send(embed = y)
+
+@bot.command()
+async def cross(ctx):
+    x = "http://play.pokemonshowdown.com/sprites/xyani/gallade.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
