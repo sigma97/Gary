@@ -6,6 +6,7 @@ from pokemon import pokemon
 import psycopg2
 import urbandictionary as u
 import esto as e
+import psycopg2
 
 client = discord.Client()
 bot = commands.Bot(command_prefix='%', pm_help=True)
@@ -32,7 +33,7 @@ quote.help = "Displays a random quote by a user in the server."
 
 @bot.command()
 async def echo(ctx, *, arg):
-    channel = bot.get_channel(422856288871907358)
+    channel = bot.get_channel(427941608428797954)
     echo_log = "**" + ctx.author.name + ":** " + arg
     await ctx.send(arg)
     await channel.send(echo_log)
@@ -70,19 +71,93 @@ ud.brief = "Returns an Urban Dictionary definition."
 ud.help = "Returns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition."
 
 @bot.command()
-@commands.is_nsfw()
 async def e621(ctx, *, args):
-    if "random" in args:
-        args = args.replace("random", "")
-        pic = e.getdata(args + " order:random"+ " -type:swf").file_url
-    else:
-        pic = e.getdata(args + " -type:swf").file_url
+    if (ctx.channel.is_nsfw()):
+        if "random" in args:
+            args = args.replace("random", "")
+            pic = e.getdata(args + " order:random" + " -type:swf -rating:s -scat -shota -loli -cub").file_url
+        else:
+            pic = e.getdata(args + " -type:swf -rating:s -scat -shota -loli -cub").file_url
+    elif (ctx.channel.name == "bot_spam" or ctx.channel.name == "spam"):
+        if "random" in args:
+            args = args.replace("random", "")
+            pic = e.getdata(args + " order:random" + " -type:swf rating:s -penis -ass -vagina").file_url
+        else:
+            pic = e.getdata(args + " -type:swf rating:s -penis -ass -vagina").file_url
+
     if (pic == None):
         await ctx.send("An image matching this query could not be found on E621.")
     else:
         x = discord.Embed()
         x.set_image(url=pic)
         await ctx.send(embed = x)
+
+
+
+
+#################################################################
+#                                                               #
+#                                                               #
+#                                                               #
+#                                                               #
+# This section contains all of the code for generating sprites. #
+#                                                               #
+#                                                               #
+#                                                               #
+#                                                               #
+#################################################################
+
+
+
+
+@bot.command()
+async def add(ctx, arg1, arg2):
+    is_mod = False
+    for x in ctx.author.roles:
+        if (x.name == "Auxiliary"):
+            is_mod = True
+    if (is_mod):
+        query = "INSERT INTO quotes (username, quote, id) VALUES (%s, %s, %s);"
+        cursor.execute("""SELECT * from quotes""")
+        rows = cursor.fetchall()
+        data = (arg1, arg2, int(rows[len(rows)-1][2]) + 1)
+        cursor.execute(query, data)
+        conn.commit()
+        await ctx.send("Quote added!")
+    else:
+        await ctx.send("You do not have the correct permissions to use this command.")
+
+add.usage = '[User] "quote"'
+add.brief = "Adds a quote to Gary."
+add.help = "Adds a quote to Gary's database."
+
+@bot.command()
+async def delete(ctx, arg):
+    cursor.execute("DELETE FROM quotes WHERE id={};".format(arg))
+    conn.commit()
+    await ctx.send("Quote deleted!")
+
+delete.usage = '[ID #]'
+delete.brief = "Deletes a quote from Gary."
+delete.help = "Deletes a quote from Gary's database."
+
+@bot.command()
+async def ids(ctx):
+    cursor.execute("""SELECT quote, id from quotes""")
+    rows = cursor.fetchall()
+    lst = []
+    for r in rows:
+        t = str(r[1])
+        x = t + ": " + r[0]
+        lst.append(x)
+    s = "\n".join(lst)
+    conn.commit()
+    await ctx.send(s[0:1967])
+    await ctx.send(s[1968:])
+
+ids.brief = "Lists the quote IDs."
+ids.help = "Lists the quote IDs from Gary's database."
+
 
 
 
