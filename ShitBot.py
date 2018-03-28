@@ -72,18 +72,33 @@ ud.help = "Returns Urban Dictionary definition of supplied word. If no word is s
 
 @bot.command()
 async def e621(ctx, *, args):
+    type_chg = False
+    if "type:" in args:
+        type_chg = True
     if (ctx.channel.is_nsfw()):
         if "random" in args:
             args = args.replace("random", "")
-            pic = e.getdata(args + " order:random" + " -type:swf -rating:s -scat -shota -loli -cub").file_url
+            if type_chg:
+                pic = e.getdata(args + " order:random" + " -rating:s -scat").file_url
+            else:
+                pic = e.getdata(args + " order:random" + " -type:swf -rating:s -scat").file_url
         else:
-            pic = e.getdata(args + " -type:swf -rating:s -scat -shota -loli -cub").file_url
+            if type_chg:
+                pic = e.getdata(args + " -rating:s -scat").file_url
+            else:
+                pic = e.getdata(args + " -type:swf -rating:s -scat").file_url
     elif (ctx.channel.name == "bot_spam" or ctx.channel.name == "spam"):
         if "random" in args:
             args = args.replace("random", "")
-            pic = e.getdata(args + " order:random" + " -type:swf rating:s -penis -ass -vagina").file_url
+            if type_chg:
+                pic = e.getdata(args + " order:random" + " rating:s -penis -ass -vagina").file_url
+            else:
+                pic = e.getdata(args + " order:random" + " -type:swf rating:s -penis -ass -vagina").file_url
         else:
-            pic = e.getdata(args + " -type:swf rating:s -penis -ass -vagina").file_url
+            if type_chg:
+                pic = e.getdata(args + " rating:s -penis -ass -vagina").file_url
+            else:
+                pic = e.getdata(args + " -type:swf rating:s -penis -ass -vagina").file_url
 
     if (pic == None):
         await ctx.send("An image matching this query could not be found on E621.")
@@ -92,6 +107,18 @@ async def e621(ctx, *, args):
         x.set_image(url=pic)
         await ctx.send(embed = x)
 
+@bot.command()
+async def nuke(ctx):
+    is_mod = False
+    for x in ctx.author.roles:
+        if (x.name == "Auxiliary"):
+            is_mod = True
+    if (ctx.channel.name == "the_wall" and is_mod):
+        await ctx.channel.purge();
+
+nuke.usage = '%nuke'
+nuke.brief = "Auxiliary-only."
+nuke.help = "Purges the messages of one specific channel."
 
 
 
@@ -133,9 +160,16 @@ add.help = "Adds a quote to Gary's database."
 
 @bot.command()
 async def delete(ctx, arg):
-    cursor.execute("DELETE FROM quotes WHERE id={};".format(arg))
-    conn.commit()
-    await ctx.send("Quote deleted!")
+    is_mod = False
+    for x in ctx.author.roles:
+        if (x.name == "Auxiliary"):
+            is_mod = True
+    if (is_mod):
+        cursor.execute("DELETE FROM quotes WHERE id={};".format(arg))
+        conn.commit()
+        await ctx.send("Quote deleted!")
+    else:
+        await ctx.send("You do not have the correct permissions to use this command.")
 
 delete.usage = '[ID #]'
 delete.brief = "Deletes a quote from Gary."
@@ -143,17 +177,24 @@ delete.help = "Deletes a quote from Gary's database."
 
 @bot.command()
 async def ids(ctx):
-    cursor.execute("""SELECT quote, id from quotes""")
-    rows = cursor.fetchall()
-    lst = []
-    for r in rows:
-        t = str(r[1])
-        x = t + ": " + r[0]
-        lst.append(x)
-    s = "\n".join(lst)
-    conn.commit()
-    await ctx.send(s[0:1967])
-    await ctx.send(s[1968:])
+    is_mod = False
+    for x in ctx.author.roles:
+        if (x.name == "Auxiliary"):
+            is_mod = True
+    if (is_mod):
+        cursor.execute("""SELECT quote, id from quotes""")
+        rows = cursor.fetchall()
+        lst = []
+        for r in rows:
+            t = str(r[1])
+            x = t + ": " + r[0]
+            lst.append(x)
+        s = "\n".join(lst)
+        conn.commit()
+        await ctx.send(s[0:1967])
+        await ctx.send(s[1968:])
+    else:
+        await ctx.send("You do not have the correct permissions to use this command.")
 
 ids.brief = "Lists the quote IDs."
 ids.help = "Lists the quote IDs from Gary's database."
