@@ -31,6 +31,12 @@ async def quote(ctx):
 quote.brief = "Displays a random quote by a user in the server."
 quote.help = "Displays a random quote by a user in the server."
 
+# @bot.listen()
+# async def on_message(message):
+#     if (str(message.author) == "Dalton Y Amaura Series#0698"):
+#         channel = message.channel
+#         await channel.send("*hugs Ama*")
+
 @bot.command()
 async def echo(ctx, *, arg):
     channel = bot.get_channel(427941608428797954)
