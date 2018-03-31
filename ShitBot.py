@@ -78,39 +78,35 @@ ud.help = "Returns Urban Dictionary definition of supplied word. If no word is s
 
 @bot.command()
 async def e621(ctx, *, args):
-    type_chg = False
-    if "type:" in args:
-        type_chg = True
-    if (ctx.channel.is_nsfw()):
+    if ((isinstance(ctx.channel, discord.TextChannel) and ctx.channel.is_nsfw()) or isinstance(ctx.channel, discord.abc.PrivateChannel)):
         if "random" in args:
-            args = args.replace("random", "")
-            if type_chg:
-                pic = e.getdata(args + " order:random" + " -rating:s -scat").file_url
+            args = args.replace("random ", "")
+            if (len(args.split(" ")) == 4):
+                pic = e.getdata(args + " order:random" + " -rating:s")
             else:
-                pic = e.getdata(args + " order:random" + " -type:swf -rating:s -scat").file_url
+                pic = e.getdata(args + " order:random" + " -rating:s -scat")
         else:
-            if type_chg:
-                pic = e.getdata(args + " -rating:s -scat").file_url
+            if (len(args.split(" ")) == 5):
+                pic = e.getdata(args + " -rating:s")
             else:
-                pic = e.getdata(args + " -type:swf -rating:s -scat").file_url
+                pic = e.getdata(args + " -rating:s -scat")
     elif (ctx.channel.name == "bot_spam" or ctx.channel.name == "spam"):
         if "random" in args:
             args = args.replace("random", "")
-            if type_chg:
-                pic = e.getdata(args + " order:random" + " rating:s -penis -ass -vagina").file_url
-            else:
-                pic = e.getdata(args + " order:random" + " -type:swf rating:s -penis -ass -vagina").file_url
+            pic = e.getdata(args + " order:random" + " rating:s")
         else:
-            if type_chg:
-                pic = e.getdata(args + " rating:s -penis -ass -vagina").file_url
-            else:
-                pic = e.getdata(args + " -type:swf rating:s -penis -ass -vagina").file_url
+            pic = e.getdata(args + " rating:s")
 
-    if (pic == None):
+    if (pic.file_url == None):
         await ctx.send("An image matching this query could not be found on E621.")
     else:
-        x = discord.Embed()
-        x.set_image(url=pic)
+        x = discord.Embed(title="#" + pic.id + ": " + pic.author, url=pic.file_url, colour=0x453399)
+        x.set_image(url=pic.file_url)
+        x.set_footer(text="https://e621.net/user/show/" + pic.creator_id)
+        artists = ", ".join(pic.artists)
+        x.add_field(name="Artist(s)", value=artists)
+        x.add_field(name="Score", value=pic.score)
+        x.add_field(name="URL", value=pic.file_url)
         await ctx.send(embed = x)
 
 @bot.command()
