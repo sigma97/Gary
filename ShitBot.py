@@ -81,6 +81,7 @@ async def e621(ctx, *, args):
     if ((isinstance(ctx.channel, discord.TextChannel) and ctx.channel.is_nsfw()) or isinstance(ctx.channel, discord.abc.PrivateChannel)):
         if "random" in args:
             args = args.replace("random ", "")
+            args = args.replace(" random", "")
             if (len(args.split(" ")) == 4):
                 pic = e.getdata(args + " order:random" + " -rating:s")
             else:
@@ -102,9 +103,10 @@ async def e621(ctx, *, args):
     else:
         x = discord.Embed(title="#" + pic.id + ": " + pic.author, url=pic.file_url, colour=0x453399)
         x.set_image(url=pic.file_url)
-        x.set_footer(text="https://e621.net/user/show/" + pic.creator_id)
-        artists = ", ".join(pic.artists)
-        x.add_field(name="Artist(s)", value=artists)
+        x.set_footer(text="https://e621.net/post/show/" + pic.id + "/")
+        if (len(pic.artists) != 0):
+            artists = ", ".join(pic.artists)
+            x.add_field(name="Artist(s)", value=artists)
         x.add_field(name="Score", value=pic.score)
         x.add_field(name="URL", value=pic.file_url)
         await ctx.send(embed = x)
@@ -121,6 +123,50 @@ async def nuke(ctx):
 nuke.usage = '%nuke'
 nuke.brief = "Auxiliary-only."
 nuke.help = "Purges the messages of one specific channel."
+
+@bot.command()
+async def bf(ctx, *, args):
+    inp = args[args.find("(")+1:args.find(")")]
+    "".join(inp.split())
+    args = args.split()
+    arr = [0] * 30000
+    index = 0
+    res = ""
+    await helper(inp, arr, index, args[1:], ctx, res)
+
+async def helper(inp, cells, index, args, ctx, res):
+    if not inp:
+        if (res == ""):
+            return
+        await ctx.send(res)
+        return
+    elif (inp[0] == '+'):
+        cells[index] += 1
+        await helper(inp[1:], cells, index, args, ctx, res)
+    elif (inp[0] == '-'):
+        cells[index] -= 1
+        await helper(inp[1:], cells, index, args, ctx, res)
+    elif (inp[0] == '>'):
+        await helper(inp[1:], cells, index+1, args, ctx, res)
+    elif (inp[0] == '<'):
+        await helper(inp[1:], cells, index-1, args, ctx, res)
+    elif (inp[0] == '.'):
+        res += chr(cells[index])
+        await helper(inp[1:], cells, index, args, ctx, res)
+    elif (inp[0] == ','):
+        if (args == []):
+            await ctx.send("Too few arguments supplied.")
+            return
+        cells[index] = ord(args[0])
+        await helper(inp[1:], cells, index, args[1:], ctx, res)
+    elif (inp[0] == '['):
+        new_str = inp[1:inp.find("]")]
+        for i in range(int(cells[index])):
+            await helper(new_str, cells, index, args, ctx, res)
+        await helper(inp[inp.find("]")+1:], cells, index, args, ctx, res)
+    else:
+        await ctx.send("BrainFuck code not recognized.")
+        return
 
 
 
