@@ -7,6 +7,8 @@ import psycopg2
 import urbandictionary as u
 import esto as e
 import psycopg2
+import markovify
+# from pybooru import Danbooru
 
 client = discord.Client()
 bot = commands.Bot(command_prefix='%', pm_help=True)
@@ -22,10 +24,15 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name='%help'))
 
 @bot.command()
-async def quote(ctx):
-    cursor.execute("""SELECT * from quotes""")
-    rows = cursor.fetchall()
-    x = random.choice(rows)
+async def quote(ctx, *args):
+    if (len(args) == 0):
+        cursor.execute("""SELECT * FROM quotes""")
+        rows = cursor.fetchall()
+        x = random.choice(rows)
+    else:
+        cursor.execute("SELECT * FROM quotes WHERE id={};".format(int(args[0])))
+        rows = cursor.fetchall()
+        x = rows[0]
     await ctx.send('"' + x[1] + '" - ' + x[0])
 
 quote.brief = "Displays a random quote by a user in the server."
@@ -33,9 +40,9 @@ quote.help = "Displays a random quote by a user in the server."
 
 # @bot.listen()
 # async def on_message(message):
-#     if (str(message.author) == "Dalton Y Amaura Series#0698"):
+#     if (str(message.content.toLowerCase()) == "fuck you gary"):
 #         channel = message.channel
-#         await channel.send("*hugs Ama*")
+#         await channel.send("What that fuck did you just say? Bitch I'll fight you.")
 
 @bot.command()
 async def echo(ctx, *, arg):
@@ -50,9 +57,14 @@ echo.help = "Repeats the text inputted by the user."
 
 @bot.command()
 async def vote(ctx, *, arg):
-    await ctx.message.add_reaction('👍')
-    await ctx.message.add_reaction('👎')
-    await ctx.message.add_reaction('🤔')
+    channel = bot.get_channel(427941608428797954)
+    echo_log = "**" + ctx.author.name + ":** " + arg
+    msg = await ctx.send(arg)
+    await channel.send(echo_log)
+    await ctx.message.delete()
+    await msg.add_reaction('👍')
+    await msg.add_reaction('👎')
+    await msg.add_reaction('🤔')
 
 vote.brief = "Adds voting reactions to message."
 vote.help = "Adds reactions to message to vote on a particular topic."
@@ -61,16 +73,35 @@ vote.help = "Adds reactions to message to vote on a particular topic."
 async def ud(ctx, *args):
     if (len(args) == 0):
         temp = u.random()[0]
-        await ctx.send("**" + temp.word + "\n" + "**" + temp.definition)
+        while (len(temp.definition) >= 1024):
+            temp = u.random()[0]
+        x = discord.Embed(title=temp.word, colour=0xBBBBBB)
+        x.set_footer(text="https://www.urbandictionary.com/define.php?term=" + temp.word.replace(" ", "%20"))
+        x.set_thumbnail(url="https://d2gatte9o95jao.cloudfront.net/assets/apple-touch-icon-55f1ee4ebfd5444ef5f8d5ba836a2d41.png")
+        x.add_field(name="Definition: ", value=temp.definition + "\n", inline=False)
+        x.add_field(name="Upvotes: ", value=temp.upvotes)
+        x.add_field(name="Downvotes: ", value=temp.downvotes)
+        await ctx.send(embed = x)
     else:
         temp = u.define(args[0])
         if (len(temp) == 0):
             await ctx.send("This word or phrase could not be found on Urban Dictionary.")
         else:
-            if (len(temp[0].definition) < 2000):
-                await ctx.send("**" + temp[0].word + "\n" + "**" + temp[0].definition)
+            t = temp[0]
+            for x in range(len(temp)):
+                if (len(temp[x].definition) < 1024):
+                    t = temp[x]
+                    break
+            if (len(t.definition) < 1024):
+                x = discord.Embed(title=t.word, colour=0xBBBBBB)
+                x.set_footer(text="https://www.urbandictionary.com/define.php?term=" + t.word.replace(" ", "%20"))
+                x.set_thumbnail(url="https://d2gatte9o95jao.cloudfront.net/assets/apple-touch-icon-55f1ee4ebfd5444ef5f8d5ba836a2d41.png")
+                x.add_field(name="Definition: ", value=t.definition, inline=False)
+                x.add_field(name="Upvotes: ", value=t.upvotes)
+                x.add_field(name="Downvotes: ", value=t.downvotes)
+                await ctx.send(embed = x)
             else:
-                await ctx.send("This word's top definition is too long for Discord.")
+                await ctx.send("This word's definitions are too long for Discord.")
 
 ud.usage = '"word or phrase"'
 ud.brief = "Returns an Urban Dictionary definition."
@@ -111,6 +142,24 @@ async def e621(ctx, *, args):
         x.add_field(name="URL", value=pic.file_url)
         await ctx.send(embed = x)
 
+# @bot.command()
+# async def danbooru(ctx, *, args):
+#     client = Danbooru('danbooru')
+#     post = client.post_list(tags=args, limit=1)
+#     pic = post[0]
+#     if (pic['file_url'] == None):
+#         await ctx.send("An image matching this query could not be found on E621.")
+#     else:
+#         x = discord.Embed(title="#" + str(pic['id']) + ": " + pic['uploader_name'], url=pic['file_url'], colour=0x453399)
+#         x.set_image(url=pic['file_url'])
+#         x.set_footer(text="http://danbooru.donmai.us/posts/" + str(pic['id']) + "/")
+#         # if (len(pic['artist']) != 0):
+#         #     artist = pic['artist']
+#         #     x.add_field(name="Artist", value=artist)
+#         x.add_field(name="Score", value=pic['score'])
+#         x.add_field(name="URL", value=pic['file_url'])
+#         await ctx.send(embed = x)
+
 @bot.command()
 async def nuke(ctx):
     is_mod = False
@@ -124,49 +173,71 @@ nuke.usage = '%nuke'
 nuke.brief = "Auxiliary-only."
 nuke.help = "Purges the messages of one specific channel."
 
-@bot.command()
-async def bf(ctx, *, args):
-    inp = args[args.find("(")+1:args.find(")")]
-    "".join(inp.split())
-    args = args.split()
-    arr = [0] * 30000
-    index = 0
-    res = ""
-    await helper(inp, arr, index, args[1:], ctx, res)
+# @bot.command()
+# async def usermarkov(ctx):
+#     channels = [x for x in ctx.guild.channels if isinstance(x, discord.TextChannel)
+#                     and (x.category_id in [408786484238483466]
+#                     or x.id in [410905286778290176, 408761145252511764, 409788610594734080, 416377470967742474, 418883686620987392])]
+#     messages = []
+#     for c in channels:
+#         ctr = 0
+#         async for m in c.history(limit=500):
+#             if m.author == ctx.author:
+#                 messages.append(m.content)
+#                 ctr += 1
+#                 if ctr >= 50:
+#                     break
+#
+#     msg = "\n".join(messages)
+#     text_model = markovify.NewlineText(msg)
+#     x = text_model.make_sentence(tries=150)
+#     await ctx.send(x)
 
-async def helper(inp, cells, index, args, ctx, res):
-    if not inp:
-        if (res == ""):
-            return
-        await ctx.send(res)
-        return
-    elif (inp[0] == '+'):
-        cells[index] += 1
-        await helper(inp[1:], cells, index, args, ctx, res)
-    elif (inp[0] == '-'):
-        cells[index] -= 1
-        await helper(inp[1:], cells, index, args, ctx, res)
-    elif (inp[0] == '>'):
-        await helper(inp[1:], cells, index+1, args, ctx, res)
-    elif (inp[0] == '<'):
-        await helper(inp[1:], cells, index-1, args, ctx, res)
-    elif (inp[0] == '.'):
-        res += chr(cells[index])
-        await helper(inp[1:], cells, index, args, ctx, res)
-    elif (inp[0] == ','):
-        if (args == []):
-            await ctx.send("Too few arguments supplied.")
-            return
-        cells[index] = ord(args[0])
-        await helper(inp[1:], cells, index, args[1:], ctx, res)
-    elif (inp[0] == '['):
-        new_str = inp[1:inp.find("]")]
-        for i in range(int(cells[index])):
-            await helper(new_str, cells, index, args, ctx, res)
-        await helper(inp[inp.find("]")+1:], cells, index, args, ctx, res)
-    else:
-        await ctx.send("BrainFuck code not recognized.")
-        return
+
+
+# @bot.command()
+# async def bf(ctx, *, args):
+#     inp = args[args.find("(")+1:args.find(")")]
+#     "".join(inp.split())
+#     args = args.split()
+#     arr = [0] * 30000
+#     index = 0
+#     res = ""
+#     await helper(inp, arr, index, args[1:], ctx, res)
+#
+# async def helper(inp, cells, index, args, ctx, res):
+#     if not inp:
+#         if (res == ""):
+#             return
+#         await ctx.send(res)
+#         return
+#     elif (inp[0] == '+'):
+#         cells[index] += 1
+#         await helper(inp[1:], cells, index, args, ctx, res)
+#     elif (inp[0] == '-'):
+#         cells[index] -= 1
+#         await helper(inp[1:], cells, index, args, ctx, res)
+#     elif (inp[0] == '>'):
+#         await helper(inp[1:], cells, index+1, args, ctx, res)
+#     elif (inp[0] == '<'):
+#         await helper(inp[1:], cells, index-1, args, ctx, res)
+#     elif (inp[0] == '.'):
+#         res += chr(cells[index])
+#         await helper(inp[1:], cells, index, args, ctx, res)
+#     elif (inp[0] == ','):
+#         if (args == []):
+#             await ctx.send("Too few arguments supplied.")
+#             return
+#         cells[index] = ord(args[0])
+#         await helper(inp[1:], cells, index, args[1:], ctx, res)
+#     elif (inp[0] == '['):
+#         new_str = inp[1:inp.find("]")]
+#         for i in range(int(cells[index])):
+#             await helper(new_str, cells, index, args, ctx, res)
+#         await helper(inp[inp.find("]")+1:], cells, index, args, ctx, res)
+#     else:
+#         await ctx.send("BrainFuck code not recognized.")
+#         return
 
 
 
@@ -225,24 +296,25 @@ delete.help = "Deletes a quote from Gary's database."
 
 @bot.command()
 async def ids(ctx):
-    is_mod = False
-    for x in ctx.author.roles:
-        if (x.name == "Auxiliary"):
-            is_mod = True
-    if (is_mod):
-        cursor.execute("""SELECT quote, id from quotes""")
-        rows = cursor.fetchall()
-        lst = []
-        for r in rows:
-            t = str(r[1])
-            x = t + ": " + r[0]
-            lst.append(x)
-        s = "\n".join(lst)
-        conn.commit()
-        await ctx.send(s[0:1967])
-        await ctx.send(s[1968:])
-    else:
-        await ctx.send("You do not have the correct permissions to use this command.")
+    channel = ctx.message.author.dm_channel
+    if (channel == None):
+        await ctx.message.author.create_dm()
+        channel = ctx.message.author.dm_channel
+    cursor.execute("""SELECT quote, id from quotes""")
+    rows = cursor.fetchall()
+    lst = []
+    msgs = []
+    for r in rows:
+        t = str(r[1])
+        x = "**" + t + "**" + ": " + r[0]
+        if (sum(len(i) for i in lst) + len(x) >= 1900):
+            msgs.append("\n".join(lst))
+            lst = []
+        lst.append(x)
+    msgs.append("\n".join(lst))
+    conn.commit()
+    for y in msgs:
+        await channel.send(y)
 
 ids.brief = "Lists the quote IDs."
 ids.help = "Lists the quote IDs from Gary's database."
@@ -541,7 +613,7 @@ async def dom(ctx):
 
 @bot.command()
 async def psych(ctx):
-    x = "https://play.pokemonshowdown.com/sprites/xyani/slaking.gif"
+    x = "https://play.pokemonshowdown.com/sprites/xyani/vaporeon.gif"
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
