@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 import random
-from quote import quotes
 from pokemon import pokemon
 import psycopg2
 import urbandictionary as u
@@ -15,6 +14,7 @@ bot = commands.Bot(command_prefix='%', pm_help=True)
 conn = psycopg2.connect(dbname="quotes")
 cursor = conn.cursor()
 
+bot.remove_command("help")
 
 @bot.event
 async def on_ready():
@@ -22,6 +22,41 @@ async def on_ready():
     print(bot.user)
     print('------')
     await bot.change_presence(activity=discord.Game(name='%help'))
+
+@bot.command()
+async def help(ctx, *args):
+    channel = ctx.message.author.dm_channel
+    if (channel == None):
+        await ctx.message.author.create_dm()
+        channel = ctx.message.author.dm_channel
+        
+    gen = """ `%help`\n Displays this message!\n
+`%quote [id (optional)]`\n Displays the quote with the specified ID. If none is given, a random quote is returned.\n
+`%echo`\n Repeats the text inputted by the user.\n
+`%vote`\n Initiates a vote using the 👍, 👎, and 🤔 reactions.\n
+`%ud [word or phrase (optional)]`\n Returns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition.\n
+`%e621 [query]`\n Returns the top e621 image of the given query. Can only be used in #bot_spam (SFW) and #nsfw_pics (NSFW).\n\u200b"""
+
+    db = """ `%add [user] [quote]`\n Auxiliary only. Adds a new quote to Gary's list.\n
+`%delete [id]`\n Auxiliary only. Deletes a quote from Gary's list.\n
+`%ids`\n DMs the user a list of quotes and their IDs.\n\u200b"""
+
+    sprites = """`%pmd [pokedex #]`\n Displays the PMD icon of the given Pokemon.\n
+`%[pokemon game] [pokemon]`\n Displays the sprite of the given pokemon from the specified game. Valid commands are:
+`%rb`, `%yellow`, `%gold`, `%silver`, `%crystal`, `%rse`, `%frlg`, `%dppt`, `%hgss`, `%bw`, `%xy`, `%sm`.\n\u200b"""
+
+    users = """`%[user]`\n Displays the pokemon commonly associated with the specified user.
+If your name does not yet have a command, DM Sigma with the pokemon you want.\n\u200b"""
+
+    msg = discord.Embed(description="The following is a list of commands that can be used with Gary.", colour=0x33B5E5)
+    msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
+    msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+    msg.add_field(name="General Commands", value=gen, inline=False)
+    msg.add_field(name="Admin Commands", value=db, inline=False)
+    msg.add_field(name="Sprite Commands", value=sprites, inline=False)
+    msg.add_field(name="User Commands", value=users, inline=False)
+    await channel.send(embed = msg)
+
 
 @bot.command()
 async def quote(ctx, *args):
@@ -71,6 +106,7 @@ vote.help = "Adds reactions to message to vote on a particular topic."
 
 @bot.command()
 async def ud(ctx, *args):
+    await ctx.channel.trigger_typing()
     if (len(args) == 0):
         temp = u.random()[0]
         while (len(temp.definition) >= 1024):
@@ -109,6 +145,7 @@ ud.help = "Returns Urban Dictionary definition of supplied word. If no word is s
 
 @bot.command()
 async def e621(ctx, *, args):
+    await ctx.channel.trigger_typing()
     if ((isinstance(ctx.channel, discord.TextChannel) and ctx.channel.is_nsfw()) or isinstance(ctx.channel, discord.abc.PrivateChannel)):
         if "random" in args:
             args = args.replace("random ", "")
@@ -175,9 +212,10 @@ nuke.help = "Purges the messages of one specific channel."
 
 # @bot.command()
 # async def usermarkov(ctx):
+#     await ctx.channel.trigger_typing()
 #     channels = [x for x in ctx.guild.channels if isinstance(x, discord.TextChannel)
-#                     and (x.category_id in [408786484238483466]
-#                     or x.id in [410905286778290176, 408761145252511764, 409788610594734080, 416377470967742474, 418883686620987392])]
+#                       and (x.category_id in [408786484238483466]
+#                       or x.id in [410905286778290176, 408761145252511764, 409788610594734080, 416377470967742474, 418883686620987392])]
 #     messages = []
 #     for c in channels:
 #         ctr = 0
