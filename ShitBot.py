@@ -25,11 +25,11 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx, *args):
-    await ctx.channel.trigger_typing()
     channel = ctx.message.author.dm_channel
     if (channel == None):
         await ctx.message.author.create_dm()
         channel = ctx.message.author.dm_channel
+    await channel.trigger_typing()
 
     gen = """ `%help`\n Displays this message!\n
 `%quote [id (optional)]`\n Displays the quote with the specified ID. If none is given, a random quote is returned.\n
@@ -71,9 +71,6 @@ async def quote(ctx, *args):
         x = rows[0]
     await ctx.send('"' + x[1] + '" - ' + x[0])
 
-quote.brief = "Displays a random quote by a user in the server."
-quote.help = "Displays a random quote by a user in the server."
-
 # @bot.listen()
 # async def on_message(message):
 #     if (str(message.content.toLowerCase()) == "fuck you gary"):
@@ -88,9 +85,6 @@ async def echo(ctx, *, arg):
     await channel.send(echo_log)
     await ctx.message.delete()
 
-echo.brief = "Repeats the text inputted by the user."
-echo.help = "Repeats the text inputted by the user."
-
 @bot.command()
 async def vote(ctx, *, arg):
     channel = bot.get_channel(427941608428797954)
@@ -101,9 +95,6 @@ async def vote(ctx, *, arg):
     await msg.add_reaction('👍')
     await msg.add_reaction('👎')
     await msg.add_reaction('🤔')
-
-vote.brief = "Adds voting reactions to message."
-vote.help = "Adds reactions to message to vote on a particular topic."
 
 @bot.command()
 async def ud(ctx, *args):
@@ -140,10 +131,6 @@ async def ud(ctx, *args):
                 await ctx.send(embed = x)
             else:
                 await ctx.send("This word's definitions are too long for Discord.")
-
-ud.usage = '"word or phrase"'
-ud.brief = "Returns an Urban Dictionary definition."
-ud.help = "Returns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition."
 
 @bot.command()
 async def e621(ctx, *, args):
@@ -207,10 +194,6 @@ async def nuke(ctx):
             is_mod = True
     if (ctx.channel.name == "the_wall" and is_mod):
         await ctx.channel.purge();
-
-nuke.usage = '%nuke'
-nuke.brief = "Auxiliary-only."
-nuke.help = "Purges the messages of one specific channel."
 
 # @bot.command()
 # async def usermarkov(ctx):
@@ -313,10 +296,6 @@ async def add(ctx, arg1, arg2):
     else:
         await ctx.send("You do not have the correct permissions to use this command.")
 
-add.usage = '[User] "quote"'
-add.brief = "Adds a quote to Gary."
-add.help = "Adds a quote to Gary's database."
-
 @bot.command()
 async def delete(ctx, arg):
     is_mod = False
@@ -330,16 +309,13 @@ async def delete(ctx, arg):
     else:
         await ctx.send("You do not have the correct permissions to use this command.")
 
-delete.usage = '[ID #]'
-delete.brief = "Deletes a quote from Gary."
-delete.help = "Deletes a quote from Gary's database."
-
 @bot.command()
 async def ids(ctx):
     channel = ctx.message.author.dm_channel
     if (channel == None):
         await ctx.message.author.create_dm()
         channel = ctx.message.author.dm_channel
+    await channel.trigger_typing()
     cursor.execute("""SELECT quote, id from quotes""")
     rows = cursor.fetchall()
     lst = []
@@ -358,9 +334,6 @@ async def ids(ctx):
         emb.set_author(name="Gary's Quote IDs", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
         emb.add_field(name="IDs", value=y)
         await channel.send(embed = emb)
-
-ids.brief = "Lists the quote IDs."
-ids.help = "Lists the quote IDs from Gary's database."
 
 
 
@@ -400,10 +373,6 @@ async def pmd(ctx, arg):
     y.set_image(url=x)
     await ctx.send(embed = y)
 
-ud.usage = "[PokeDex #]"
-ud.brief = "Displays the given Pokemon's Mystery Dungeon icon."
-ud.help = "Displays the given Pokemon's Mystery Dungeon icon."
-
 @bot.command()
 async def rb(ctx, arg):
     arg = arg.lower()
@@ -417,10 +386,6 @@ async def rb(ctx, arg):
         await ctx.send(embed = y)
     else:
         await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
-
-rb.usage = "[Pokemon]"
-rb.brief = "Displays the given Pokemon's sprite from Red/Blue."
-rb.help = "Displays the given Pokemon's sprite from Red/Blue."
 
 @bot.command()
 async def yellow(ctx, arg):
@@ -436,10 +401,6 @@ async def yellow(ctx, arg):
     else:
         await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
-yellow.usage = "[Pokemon]"
-yellow.brief = "Displays the given Pokemon's sprite from Yellow."
-yellow.help = "Displays the given Pokemon's sprite from Yellow."
-
 @bot.command()
 async def silver(ctx, arg):
     arg = arg.lower()
@@ -453,10 +414,6 @@ async def silver(ctx, arg):
         await ctx.send(embed = y)
     else:
         await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
-
-silver.usage = "[Pokemon]"
-silver.brief = "Displays the given Pokemon's sprite from Silver."
-silver.help = "Displays the given Pokemon's sprite from Silver."
 
 @bot.command()
 async def gold(ctx, arg):
@@ -472,10 +429,6 @@ async def gold(ctx, arg):
     else:
         await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
-gold.usage = "[Pokemon]"
-gold.brief = "Displays the given Pokemon's sprite from Gold."
-gold.help = "Displays the given Pokemon's sprite from Gold."
-
 @bot.command()
 async def crystal(ctx, arg):
     arg = arg.lower()
@@ -490,10 +443,6 @@ async def crystal(ctx, arg):
     else:
         await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
-crystal.usage = "[Pokemon]"
-crystal.brief = "Displays the given Pokemon's sprite from Crystal."
-crystal.help = "Displays the given Pokemon's sprite from Crystal."
-
 @bot.command()
 async def rse(ctx, arg):
     arg = arg.lower()
@@ -501,10 +450,6 @@ async def rse(ctx, arg):
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
-
-rse.usage = "[Pokemon]"
-rse.brief = "Displays the given Pokemon's sprite from R/S/E."
-rse.help = "Displays the given Pokemon's sprite from Ruby/Sapphire/Emerald."
 
 @bot.command()
 async def frlg(ctx, arg):
@@ -514,10 +459,6 @@ async def frlg(ctx, arg):
     y.set_image(url=x)
     await ctx.send(embed = y)
 
-frlg.usage = "[Pokemon]"
-frlg.brief = "Displays the given Pokemon's sprite from FR/LG."
-frlg.help = "Displays the given Pokemon's sprite from FireRed/LeafGreen."
-
 @bot.command()
 async def dppt(ctx, arg):
     arg = arg.lower()
@@ -525,10 +466,6 @@ async def dppt(ctx, arg):
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
-
-dppt.usage = "[Pokemon]"
-dppt.brief = "Displays the given Pokemon's sprite from D/P/Pt."
-dppt.help = "Displays the given Pokemon's sprite from Diamond/Pearl/Platinum."
 
 @bot.command()
 async def hgss(ctx, arg):
@@ -538,10 +475,6 @@ async def hgss(ctx, arg):
     y.set_image(url=x)
     await ctx.send(embed = y)
 
-hgss.usage = "[Pokemon]"
-hgss.brief = "Displays the given Pokemon's sprite from HG/SS."
-hgss.help = "Displays the given Pokemon's sprite from HeartGold/SoulSilver."
-
 @bot.command()
 async def bw(ctx, arg):
     arg = arg.lower()
@@ -549,10 +482,6 @@ async def bw(ctx, arg):
     y = discord.Embed()
     y.set_image(url=x)
     await ctx.send(embed = y)
-
-bw.usage = "[Pokemon]"
-bw.brief = "Displays the given Pokemon's sprite from Black/White."
-bw.help = "Displays the given Pokemon's sprite from Black/White."
 
 @bot.command()
 async def xy(ctx, arg):
@@ -563,18 +492,10 @@ async def xy(ctx, arg):
             return
     await xysm(ctx, arg)
 
-xy.usage = "[Pokemon]"
-xy.brief = "Displays the given Pokemon's sprite from X/Y."
-xy.help = "Displays the given Pokemon's sprite from X/Y."
-
 @bot.command()
 async def sm(ctx, arg):
     arg = arg.lower()
     await xysm(ctx, arg)
-
-sm.usage = "[Pokemon]"
-sm.brief = "Displays the given Pokemon's sprite from Sun/Moon."
-sm.help = "Displays the given Pokemon's sprite from Sun/Moon."
 
 async def xysm(ctx, arg):
     x = "https://play.pokemonshowdown.com/sprites/xyani/" + arg + ".gif"
