@@ -25,11 +25,12 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx, *args):
+    await ctx.channel.trigger_typing()
     channel = ctx.message.author.dm_channel
     if (channel == None):
         await ctx.message.author.create_dm()
         channel = ctx.message.author.dm_channel
-        
+
     gen = """ `%help`\n Displays this message!\n
 `%quote [id (optional)]`\n Displays the quote with the specified ID. If none is given, a random quote is returned.\n
 `%echo`\n Repeats the text inputted by the user.\n
@@ -112,6 +113,7 @@ async def ud(ctx, *args):
         while (len(temp.definition) >= 1024):
             temp = u.random()[0]
         x = discord.Embed(title=temp.word, colour=0xBBBBBB)
+        x.set_author(name="Urban Dictionary", icon_url="https://d2gatte9o95jao.cloudfront.net/assets/apple-touch-icon-55f1ee4ebfd5444ef5f8d5ba836a2d41.png")
         x.set_footer(text="https://www.urbandictionary.com/define.php?term=" + temp.word.replace(" ", "%20"))
         x.set_thumbnail(url="https://d2gatte9o95jao.cloudfront.net/assets/apple-touch-icon-55f1ee4ebfd5444ef5f8d5ba836a2d41.png")
         x.add_field(name="Definition: ", value=temp.definition + "\n", inline=False)
@@ -344,15 +346,18 @@ async def ids(ctx):
     msgs = []
     for r in rows:
         t = str(r[1])
-        x = "**" + t + "**" + ": " + r[0]
-        if (sum(len(i) for i in lst) + len(x) >= 1900):
+        x = "`" + t + "`" + ": " + r[0]
+        if (sum(len(i) for i in lst) + len(x) >= 1000):
             msgs.append("\n".join(lst))
             lst = []
         lst.append(x)
     msgs.append("\n".join(lst))
     conn.commit()
     for y in msgs:
-        await channel.send(y)
+        emb = discord.Embed(colour=0x33B5E5)
+        emb.set_author(name="Gary's Quote IDs", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        emb.add_field(name="IDs", value=y)
+        await channel.send(embed = emb)
 
 ids.brief = "Lists the quote IDs."
 ids.help = "Lists the quote IDs from Gary's database."
