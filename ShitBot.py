@@ -103,11 +103,11 @@ async def ud(ctx, *args):
         temp = u.random()[0]
         while (len(temp.definition) >= 1024):
             temp = u.random()[0]
-        x = discord.Embed(title=temp.word, colour=0xBBBBBB)
+        x = discord.Embed(colour=0xBBBBBB)
         x.set_author(name="Urban Dictionary", icon_url="https://d2gatte9o95jao.cloudfront.net/assets/apple-touch-icon-55f1ee4ebfd5444ef5f8d5ba836a2d41.png")
         x.set_footer(text="https://www.urbandictionary.com/define.php?term=" + temp.word.replace(" ", "%20"))
         x.set_thumbnail(url="https://d2gatte9o95jao.cloudfront.net/assets/apple-touch-icon-55f1ee4ebfd5444ef5f8d5ba836a2d41.png")
-        x.add_field(name="Definition: ", value=temp.definition + "\n", inline=False)
+        x.add_field(name=temp.word, value=temp.definition + "\n", inline=False)
         x.add_field(name="Upvotes: ", value=temp.upvotes)
         x.add_field(name="Downvotes: ", value=temp.downvotes)
         await ctx.send(embed = x)
