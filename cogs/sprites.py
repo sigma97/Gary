@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.pokemon import pokemon
+from .util.pokemon import pokemon
 
 
 class SpriteCog:

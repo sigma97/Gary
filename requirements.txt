@@ -4,3 +4,8 @@ websockets>=3.1,<4.0
 chardet
 asyncio
 psycopg2
+markovify
+random
+urbandictionary
+esto
+pybooru

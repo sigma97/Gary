@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import random
 
 
 class GeneralCog:
@@ -18,6 +19,9 @@ class GeneralCog:
 `%quote [id (optional)]`\n Displays the quote with the specified ID. If none is given, a random quote is returned.\n
 `%echo`\n Repeats the text inputted by the user.\n
 `%vote`\n Initiates a vote using the 👍, 👎, and 🤔 reactions.\n
+`%roll [# sides (optional)]`\n Displays a random number in the given range (six by default).\n
+`%flip`\n Returns "Heads" or "Tails" at random.\n
+`%oracle`\n Magic 8-Ball.\n
 `%ud [word or phrase (optional)]`\n Returns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition.\n
 `%e621 [query]`\n Returns the top e621 image of the given query. Can only be used in #bot_spam (SFW) and #nsfw_pics (NSFW).\n\u200b"""
 
@@ -42,6 +46,38 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
         await channel.send(embed = msg)
 
     @commands.command()
+    async def roll(self, ctx, *args):
+        if (len(args) == 0):
+            await ctx.send(random.randint(1,6))
+        else:
+            if isinstance(int(args[0]), int):
+                await ctx.send(random.randint(1,int(args[0])))
+            else:
+                return
+
+    @commands.command()
+    async def flip(self, ctx):
+        await ctx.send(random.choice(["Heads", "Tails"]))
+
+    @commands.command()
+    async def oracle(self, ctx):
+        responses = ["It is certain.",
+                     "It is decidedly so.",
+                     "Without a doubt.",
+                     "Yes, definitely.",
+                     "You may rely on it.",
+                     "As I see it, yes.",
+                     "Most likely.",
+                     "Outlook good.",
+                     "Yes.",
+                     "Don't count on it.",
+                     "My reply is no.",
+                     "My sources say no.",
+                     "Outlook not so good.",
+                     "Very doubtful"]
+        await ctx.send(random.choice(responses))
+
+    @commands.command()
     async def echo(self, ctx, *, arg):
         channel = self.bot.get_channel(427941608428797954)
         echo_log = "**" + ctx.author.name + ":** " + arg
@@ -59,6 +95,15 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
         await msg.add_reaction('👍')
         await msg.add_reaction('👎')
         await msg.add_reaction('🤔')
+
+    @commands.command(hidden=True)
+    async def nuke(self, ctx):
+        is_mod = False
+        for x in ctx.author.roles:
+            if (x.name == "Auxiliary"):
+                is_mod = True
+        if (ctx.channel.name == "the_wall" and is_mod):
+            await ctx.channel.purge();
 
 
 def setup(bot):
