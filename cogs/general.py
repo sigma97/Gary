@@ -11,13 +11,12 @@ class GeneralCog:
     async def help(self, ctx, *args):
         channel = ctx.message.author.dm_channel
         if (channel == None):
-            await ctx.message.author.create_dm()
-            channel = ctx.message.author.dm_channel
+            channel = await ctx.message.author.create_dm()
         await channel.trigger_typing()
 
         gen = """ `%help`\n Displays this message!\n
 `%quote [id (optional)]`\n Displays the quote with the specified ID. If none is given, a random quote is returned.\n
-`%echo`\n Repeats the text inputted by the user.\n
+`%echo [string]`\n Repeats the text inputted by the user.\n
 `%vote`\n Initiates a vote using the 👍, 👎, and 🤔 reactions.\n
 `%roll [# sides (optional)]`\n Displays a random number in the given range (six by default).\n
 `%flip`\n Returns "Heads" or "Tails" at random.\n
@@ -45,15 +44,29 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
         msg.add_field(name="User Commands", value=users, inline=False)
         await channel.send(embed = msg)
 
+    @staticmethod
+    async def _err_catch(ctx, err, format, desc):
+        channel = ctx.message.author.dm_channel
+        if channel == None:
+            channel = await ctx.message.author.create_dm()
+        x = discord.Embed(colour=0x33B5E5, title=err, description='`' + format + '`\n')
+        x.add_field(name=desc, value="\u200b")
+        x.set_author(name="Gary Command Error", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        x.set_footer(text="Please use %help or DM Sigma#0472 with any further questions.")
+        await channel.send(embed = x)
+
     @commands.command()
     async def roll(self, ctx, *args):
         if (len(args) == 0):
             await ctx.send(random.randint(1,6))
         else:
-            if isinstance(int(args[0]), int):
+            try:
                 await ctx.send(random.randint(1,int(args[0])))
-            else:
-                return
+            except ValueError:
+                err = "Invalid argument type."
+                format = "%roll [# sides (optional)]"
+                desc = "The %roll command displays a random number in the given range (six by default)."
+                await self._err_catch(ctx, err, format, desc)
 
     @commands.command()
     async def flip(self, ctx):
@@ -78,23 +91,37 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
         await ctx.send(random.choice(responses))
 
     @commands.command()
-    async def echo(self, ctx, *, arg):
+    async def echo(self, ctx, *args):
         channel = self.bot.get_channel(427941608428797954)
+        arg = " ".join(args)
         echo_log = "**" + ctx.author.name + ":** " + arg
-        await ctx.send(arg)
-        await channel.send(echo_log)
-        await ctx.message.delete()
+        try:
+            await ctx.send(arg)
+            await channel.send(echo_log)
+            await ctx.message.delete()
+        except discord.errors.HTTPException:
+            err = "Missing required argument."
+            format = "%echo [string]"
+            desc = "The %echo command repeats the text inputted by the user.."
+            await self._err_catch(ctx, err, format, desc)
 
     @commands.command()
-    async def vote(self, ctx, *, arg):
+    async def vote(self, ctx, *args):
         channel = self.bot.get_channel(427941608428797954)
+        arg = " ".join(args)
         echo_log = "**" + ctx.author.name + ":** " + arg
-        msg = await ctx.send(arg)
-        await channel.send(echo_log)
-        await ctx.message.delete()
-        await msg.add_reaction('👍')
-        await msg.add_reaction('👎')
-        await msg.add_reaction('🤔')
+        try:
+            msg = await ctx.send(arg)
+            await channel.send(echo_log)
+            await ctx.message.delete()
+            await msg.add_reaction('👍')
+            await msg.add_reaction('👎')
+            await msg.add_reaction('🤔')
+        except discord.errors.HTTPException:
+            err = "Missing required argument."
+            format = "%vote [string]"
+            desc = "The %vote command initiates a vote using the 👍, 👎, and 🤔 reactions."
+            await self._err_catch(ctx, err, format, desc)
 
     @commands.command(hidden=True)
     async def nuke(self, ctx):
