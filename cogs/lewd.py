@@ -62,7 +62,8 @@ class LewdCog:
         if (pic.file_url == None):
             await ctx.send("An image matching this query could not be found on E621.")
         else:
-            x = discord.Embed(title="#" + pic.id + ": " + pic.author, url=pic.file_url, colour=0x453399)
+            x = discord.Embed(title="#" + pic.id + ": " + pic.author, url="https://e621.net/post/show/" + pic.id + "/", colour=0x453399)
+            x.set_author(name="e621", icon_url="http://i0.kym-cdn.com/entries/icons/original/000/016/852/e621_logo.png")
             x.set_image(url=pic.file_url)
             x.set_footer(text="https://e621.net/post/show/" + pic.id + "/")
             if (len(pic.artists) != 0):

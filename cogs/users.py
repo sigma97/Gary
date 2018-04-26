@@ -272,7 +272,7 @@ class UserCog:
         y.set_image(url=x)
         await ctx.send(embed = y)
 
-    @commands.command(aliases=["sea"])
+    @commands.command(aliases=["sea", "taco_dealer", "taco_cat"])
     async def seacasro(self, ctx):
         x = "http://play.pokemonshowdown.com/sprites/xyani-shiny/litten.gif"
         y = discord.Embed()
