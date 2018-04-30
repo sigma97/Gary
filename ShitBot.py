@@ -1,4 +1,5 @@
 import discord
+import token
 from discord.ext import commands
 
 
@@ -29,4 +30,4 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name='%help'))
 
 
-bot.run('NDEwMjM1NjgxMTA2MDM0Njg5.DVqNRA.5hICSESXedjhaue_vwXYu0JqVDY')
+bot.run(token)
