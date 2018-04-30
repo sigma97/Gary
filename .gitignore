@@ -1,7 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 cogs/__pycache__/
-token.py
+cogs/utils/key.py
 *.py[cod]
 *$py.class
 

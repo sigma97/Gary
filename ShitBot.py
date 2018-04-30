@@ -1,5 +1,5 @@
 import discord
-import token
+import cogs.utils.key as key
 from discord.ext import commands
 
 
@@ -30,4 +30,4 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name='%help'))
 
 
-bot.run(token)
+bot.run(key.key)

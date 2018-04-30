@@ -93,35 +93,35 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
     @commands.command()
     async def echo(self, ctx, *args):
         channel = self.bot.get_channel(427941608428797954)
-        arg = " ".join(args)
-        echo_log = "**" + ctx.author.name + ":** " + arg
-        try:
-            await ctx.send(arg)
-            await channel.send(echo_log)
-            await ctx.message.delete()
-        except discord.errors.HTTPException:
+        if not args:
             err = "Missing required argument."
             format = "%echo [string]"
             desc = "The %echo command repeats the text inputted by the user.."
             await self._err_catch(ctx, err, format, desc)
+            return
+        arg = " ".join(args)
+        echo_log = "**" + ctx.author.name + ":** " + arg
+        await ctx.send(arg)
+        await channel.send(echo_log)
+        await ctx.message.delete()
 
     @commands.command()
     async def vote(self, ctx, *args):
         channel = self.bot.get_channel(427941608428797954)
-        arg = " ".join(args)
-        echo_log = "**" + ctx.author.name + ":** " + arg
-        try:
-            msg = await ctx.send(arg)
-            await channel.send(echo_log)
-            await ctx.message.delete()
-            await msg.add_reaction('👍')
-            await msg.add_reaction('👎')
-            await msg.add_reaction('🤔')
-        except discord.errors.HTTPException:
+        if not args:
             err = "Missing required argument."
             format = "%vote [string]"
             desc = "The %vote command initiates a vote using the 👍, 👎, and 🤔 reactions."
             await self._err_catch(ctx, err, format, desc)
+            return
+        arg = " ".join(args)
+        echo_log = "**" + ctx.author.name + ":** " + arg
+        msg = await ctx.send(arg)
+        await channel.send(echo_log)
+        await ctx.message.delete()
+        await msg.add_reaction('👍')
+        await msg.add_reaction('👎')
+        await msg.add_reaction('🤔')
 
     @commands.command(hidden=True)
     async def nuke(self, ctx):
