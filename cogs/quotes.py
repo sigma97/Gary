@@ -60,13 +60,13 @@ class QuoteCog:
             await ctx.message.author.create_dm()
             channel = ctx.message.author.dm_channel
         await channel.trigger_typing()
-        cursor.execute("""SELECT quote, id from quotes""")
+        cursor.execute("""SELECT quote, id, username from quotes""")
         rows = cursor.fetchall()
         lst = []
         msgs = []
         for r in rows:
             t = str(r[1])
-            x = "`" + t + "`" + ": " + r[0]
+            x = "`" + t + "`" + ": "+ "**" + r[2] + "** - " + r[0]
             if (sum(len(i) for i in lst) + len(x) >= 1000):
                 msgs.append("\n".join(lst))
                 lst = []
