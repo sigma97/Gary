@@ -14,7 +14,8 @@ extensions = ['cogs.quotes',
               'cogs.interpreter',
               'cogs.markov',
               'cogs.ud',
-              'cogs.lewd']
+              'cogs.lewd',
+              'cogs.trivia']
 
 if __name__ == '__main__':
     for e in extensions:
