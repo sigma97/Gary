@@ -7,14 +7,40 @@ class GeneralCog:
     def __init__(self, bot):
         self.bot = bot
 
+    async def _lastfm_help(self, ctx):
+        channel = ctx.message.author.dm_channel
+        if (channel == None):
+            channel = await ctx.message.author.create_dm()
+        await channel.trigger_typing()
+        lfm = """ `%artist [artist name]`\n Displays information on the given artist.\n
+`%top_albums [artist name]`\n Displays the top five albums by the given artist.\n
+`%top_tracks [artist name]`\n Displays the top five tracks by the given artist.\n
+`%album [album name] - [artist name]`\n Displays information on the given album as well as a tracklist.\n
+`%track [track name] - [artist name]`\n Displays information on the given track as well as a playable Spotify link.\n\u200b"""
+
+        msg = discord.Embed(description="The following is a list of Last.fm commands that can be used with Gary.", colour=0x33B5E5)
+        msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
+        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        msg.add_field(name="Last.fm Commands", value=lfm, inline=True)
+        await channel.send(embed=msg)
+
+    async def _help_redirect(self, ctx, args):
+        if args[0] == 'last.fm':
+            await self._lastfm_help(ctx)
+        else:
+            return
+
     @commands.command()
     async def help(self, ctx, *args):
+        if args:
+            await self._help_redirect(ctx, args)
+            return
         channel = ctx.message.author.dm_channel
         if (channel == None):
             channel = await ctx.message.author.create_dm()
         await channel.trigger_typing()
 
-        gen = """ `%help`\n Displays this message!\n
+        gen = """ `%help [string (optional)]`\n Displays this message. If given an argument, displays information on the given command(s). Valid arguments are:\n`last.fm` \n
 `%quote [id (optional)]`\n Displays the quote with the specified ID. If none is given, a random quote is returned.\n
 `%echo [string]`\n Repeats the text inputted by the user.\n
 `%vote`\n Initiates a vote using the 👍, 👎, and 🤔 reactions.\n
@@ -38,10 +64,10 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
         msg = discord.Embed(description="The following is a list of commands that can be used with Gary.", colour=0x33B5E5)
         msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
         msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
-        msg.add_field(name="General Commands", value=gen, inline=False)
-        msg.add_field(name="Admin Commands", value=db, inline=False)
-        msg.add_field(name="Sprite Commands", value=sprites, inline=False)
-        msg.add_field(name="User Commands", value=users, inline=False)
+        msg.add_field(name="General Commands", value=gen, inline=True)
+        msg.add_field(name="Admin Commands", value=db, inline=True)
+        msg.add_field(name="Sprite Commands", value=sprites, inline=True)
+        msg.add_field(name="User Commands", value=users, inline=True)
         await channel.send(embed = msg)
 
     @staticmethod
