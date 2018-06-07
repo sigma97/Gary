@@ -52,7 +52,7 @@ class LastfmCog:
     async def top_albums(self, ctx, *args):
         await ctx.channel.trigger_typing()
 
-        # Set up connectio
+        # Set up connection
         network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
         args = " ".join(args)
         artist = network.get_artist(args)

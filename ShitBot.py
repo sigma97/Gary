@@ -17,7 +17,8 @@ extensions = ['cogs.quotes',
               'cogs.ud',
               'cogs.lewd',
               'cogs.trivia',
-              'cogs.lastfm']
+              'cogs.lastfm',
+              'cogs.imgur']
 
 if __name__ == '__main__':
     for e in extensions:

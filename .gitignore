@@ -3,6 +3,7 @@ __pycache__/
 cogs/__pycache__/
 cogs/utils/key.py
 cogs/utils/spotify_key.py
+cogs/utils/imgur_key.py
 *.py[cod]
 *$py.class
 
