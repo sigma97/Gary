@@ -31,6 +31,14 @@ class GeneralCog:
             return
 
     @commands.command()
+    async def userinfo(self, ctx, *args):
+        msg = discord.Embed()
+        msg.set_author(name=ctx.author.name, icon_url=ctx.guild.icon)
+        msg.add_field(name="User ID", value=ctx.author.id + "+" + str(ctx.author.discriminator))
+        msg.add_field(name="Nickname", value=ctx.author.joined_at)
+        await ctx.send(embed=msg)
+
+    @commands.command()
     async def help(self, ctx, *args):
         if args:
             await self._help_redirect(ctx, args)
@@ -115,6 +123,61 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
                      "Outlook not so good.",
                      "Very doubtful"]
         await ctx.send(random.choice(responses))
+
+    @commands.command()
+    async def bigtext(self, ctx, *args):
+        channel = self.bot.get_channel(427941608428797954)
+        if not args:
+            err = "Missing required argument."
+            format = "%echo [string]"
+            desc = "The %echo command repeats the text inputted by the user.."
+            await self._err_catch(ctx, err, format, desc)
+            return
+        args = " ".join(args)
+        echo_log = "**" + ctx.author.name + ":** " + args
+        str = []
+        args = args.lower()
+        for x in args:
+            if (x == " "):
+                str.append("   ")
+            elif (x == '*'):
+                str.append(":asterisk:")
+            elif (x == '#'):
+                str.append(":hash:")
+            elif (x == '?'):
+                str.append(":question:")
+            elif (x == '!'):
+                str.append(":exclamation:")
+            elif (x.isalpha()):
+                str.append(":regional_indicator_{}:".format(x))
+            elif (x.isnumeric()):
+                if (x == '1'):
+                    str.append(":one:")
+                elif (x == '2'):
+                    str.append(":two:")
+                elif (x == '3'):
+                    str.append(":three:")
+                elif (x == '4'):
+                    str.append(":four:")
+                elif (x == '5'):
+                    str.append(":five:")
+                elif (x == '6'):
+                    str.append(":six:")
+                elif (x == '7'):
+                    str.append(":seven:")
+                elif (x == '8'):
+                    str.append(":eight:")
+                elif (x == '9'):
+                    str.append(":nine:")
+                elif (x == '10'):
+                    str.append(":keycap_ten:")
+            else:
+                continue
+        str = "".join(str)
+        await ctx.send(str)
+        await channel.send(echo_log)
+        await ctx.message.delete()
+
 
     @commands.command()
     async def echo(self, ctx, *args):

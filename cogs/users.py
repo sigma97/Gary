@@ -335,5 +335,12 @@ class UserCog:
         y.set_image(url=x)
         await ctx.send(embed = y)
 
+    @commands.command()
+    async def tat(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/zorua.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
 def setup(bot):
     bot.add_cog(UserCog(bot))

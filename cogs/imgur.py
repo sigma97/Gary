@@ -17,7 +17,5 @@ class ImgurCog:
         embed.set_image(url=image.link)
         await ctx.send(embed=embed)
 
-
-
 def setup(bot):
     bot.add_cog(ImgurCog(bot))
