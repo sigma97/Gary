@@ -137,42 +137,20 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
         echo_log = "**" + ctx.author.name + ":** " + args
         str = []
         args = args.lower()
+
+        misc = {'0': ":zero:", '1': ":one:",'2': ":two:", '3': ":three:",
+                '4': ":four:",'5': ":five:", '6': ":six:", '7': ":seven:",
+                '8': ":eight:", '9': ":nine:", ' ': "   ", '*': ":asterisk:",
+                '#': ":hash:", '?': ":question:", '!': ":exclamation:"}
+
         for x in args:
-            if (x == " "):
-                str.append("   ")
-            elif (x == '*'):
-                str.append(":asterisk:")
-            elif (x == '#'):
-                str.append(":hash:")
-            elif (x == '?'):
-                str.append(":question:")
-            elif (x == '!'):
-                str.append(":exclamation:")
-            elif (x.isalpha()):
-                str.append(":regional_indicator_{}:".format(x))
-            elif (x.isnumeric()):
-                if (x == '1'):
-                    str.append(":one:")
-                elif (x == '2'):
-                    str.append(":two:")
-                elif (x == '3'):
-                    str.append(":three:")
-                elif (x == '4'):
-                    str.append(":four:")
-                elif (x == '5'):
-                    str.append(":five:")
-                elif (x == '6'):
-                    str.append(":six:")
-                elif (x == '7'):
-                    str.append(":seven:")
-                elif (x == '8'):
-                    str.append(":eight:")
-                elif (x == '9'):
-                    str.append(":nine:")
-                elif (x == '10'):
-                    str.append(":keycap_ten:")
+            if (x.isalpha()):
+                str.append(":regional_indicator_{}:".format(x.lower()))
+            elif x in misc:
+                str.append(misc[x])
             else:
                 continue
+
         str = "".join(str)
         await ctx.send(str)
         await channel.send(echo_log)
