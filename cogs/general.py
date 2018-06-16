@@ -32,10 +32,37 @@ class GeneralCog:
 
     @commands.command()
     async def userinfo(self, ctx, *args):
-        msg = discord.Embed()
-        msg.set_author(name=ctx.author.name, icon_url=ctx.guild.icon)
-        msg.add_field(name="User ID", value=ctx.author.id + "+" + str(ctx.author.discriminator))
-        msg.add_field(name="Nickname", value=ctx.author.joined_at)
+        await ctx.channel.trigger_typing()
+
+        author = ctx.author
+
+        if args:
+            author = None
+            if args[0][0:3] == "<@!":
+                author = ctx.guild.get_member(int(args[0][3:len(args[0])-1]))
+            elif args[0][0:2] == "<@":
+                author = ctx.guild.get_member(int(args[0][2:len(args[0])-1]))
+            else:
+                args = " ".join(args)
+                for m in ctx.guild.members:
+                    if args == m.name + "#" + m.discriminator:
+                        author = m
+                        break
+            if author == None:
+                await ctx.send("User not found in this server.")
+                return
+
+        msg = discord.Embed(colour=author.color)
+        msg.set_author(name=author.name, icon_url=author.avatar_url)
+        msg.set_thumbnail(url=author.avatar_url)
+        msg.add_field(name="User ID", value=author.name + "#" + str(author.discriminator))
+        msg.set_footer(text="For help with Gary's commands, use %help.")
+        msg.add_field(name="Nickname", value=author.nick)
+        msg.add_field(name="Join Date", value=str(author.joined_at)[:10])
+        msg.add_field(name="Account Created", value=str(author.created_at)[:10])
+        msg.add_field(name="Status", value=str(author.status).title())
+        msg.add_field(name="Roles", value=", ".join(r.name for r in reversed(author.roles)))
+
         await ctx.send(embed=msg)
 
     @commands.command()
