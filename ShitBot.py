@@ -2,7 +2,6 @@ import discord
 import cogs.utils.key as key
 from discord.ext import commands
 
-
 client = discord.Client()
 bot = commands.Bot(command_prefix='%', pm_help=True)
 
@@ -30,6 +29,5 @@ async def on_ready():
     print(bot.user)
     print('------')
     await bot.change_presence(activity=discord.Game(name='%help'))
-
 
 bot.run(key.key)
