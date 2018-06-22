@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from imgurpython import ImgurClient
 import random
-from .utils.imgur_key import client_id, client_key
+from cogs.utils.imgur_key import client_id, client_key
 
 class ImgurCog:
     def __init__(self, bot):

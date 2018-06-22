@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-from .utils.pokemon import pokemon
-
+from cogs.utils.pokemon import pokemon
 
 class SpriteCog:
     def __init__(self, bot):

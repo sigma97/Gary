@@ -3,7 +3,7 @@ from discord.ext import commands
 import requests
 import json
 import pylast
-from .utils.spotify_key import client_id, API_KEY, API_SECRET
+from cogs.utils.spotify_key import client_id, API_KEY, API_SECRET
 
 class LastfmCog:
     def __init__(self, bot):

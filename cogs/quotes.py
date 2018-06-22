@@ -12,6 +12,34 @@ class QuoteCog:
         self.bot = bot
 
     @commands.command()
+    async def quotes(self, ctx, *args):
+        cursor.execute("SELECT * FROM quotes WHERE username={};".format("'" + args[0].title() + "'"))
+        rows = cursor.fetchall()
+        lst = []
+        msgs = []
+        for r in rows:
+            t = str(r[1])
+            x = "`" + str(r[2]) + "`" + ": "+ r[1]
+            if (sum(len(i) for i in lst) + len(x) >= 1000):
+                msgs.append("\n".join(lst))
+                lst = []
+            lst.append(x)
+        msgs.append("\n".join(lst))
+        conn.commit()
+        if not rows:
+            emb = discord.Embed(colour=0x33B5E5)
+            emb.set_author(name="Quote IDs for " + args[0].title(), icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+            emb.add_field(name="IDs", value="No quotes were found for this user.")
+            await ctx.send(embed = emb)
+        else:
+            for y in msgs:
+                emb = discord.Embed(colour=0x33B5E5)
+                emb.set_author(name="Quote IDs for " + args[0].title(), icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+                emb.add_field(name="IDs", value=y)
+                await ctx.send(embed = emb)
+
+
+    @commands.command()
     async def quote(self, ctx, *args):
         if (len(args) == 0):
             cursor.execute("""SELECT * FROM quotes""")
