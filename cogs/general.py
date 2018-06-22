@@ -200,6 +200,17 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
         await ctx.message.delete()
 
     @commands.command()
+    async def eval(self, ctx, *, args):
+        is_mod = False
+        for x in ctx.author.roles:
+            if (x.name == "Auxiliary"):
+                is_mod = True
+        if (is_mod):
+            await ctx.send(eval(args))
+        else:
+            await ctx.send("You do not have the correct permissions to use this command.")
+
+    @commands.command()
     async def vote(self, ctx, *args):
         channel = self.bot.get_channel(427941608428797954)
         if not args:
