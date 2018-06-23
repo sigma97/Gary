@@ -39,7 +39,7 @@ class TriviaCog:
 
         # Recurse if NoneType
         if data[0]['value'] is None:
-            await _conn(ctx)
+            await self._conn(ctx)
             return
 
         # Keeps searching until value <= 500
@@ -48,7 +48,7 @@ class TriviaCog:
             raw_data = response.content.decode("utf-8")
             data = json.loads(raw_data)
             if data[0]['value'] is None:
-                await _conn(ctx)
+                await self._conn(ctx)
                 return
 
         # Create question embed

@@ -18,7 +18,6 @@ class QuoteCog:
         lst = []
         msgs = []
         for r in rows:
-            t = str(r[1])
             x = "`" + str(r[2]) + "`" + ": "+ r[1]
             if (sum(len(i) for i in lst) + len(x) >= 1000):
                 msgs.append("\n".join(lst))

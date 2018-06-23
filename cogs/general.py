@@ -235,7 +235,17 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
             if (x.name == "Auxiliary"):
                 is_mod = True
         if (ctx.channel.name == "the_wall" and is_mod):
-            await ctx.channel.purge();
+            await ctx.channel.purge()
+
+    @commands.command()
+    async def clearthepins(self, ctx):
+        is_mod = False
+        for x in ctx.author.roles:
+            if (x.name == "Auxiliary" or x.name == "Sig"):
+                is_mod = True
+                break
+        if (is_mod):
+            await ctx.send("<@!147488112770023424> CLEAR THE DAMN PINS")
 
 
 def setup(bot):

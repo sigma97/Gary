@@ -19,9 +19,6 @@ class LewdCog:
             x = discord.Embed(title="#" + str(pic['id']) + ": " + pic['uploader_name'], url=pic['file_url'], colour=0x453399)
             x.set_image(url=pic['file_url'])
             x.set_footer(text="http://danbooru.donmai.us/posts/" + str(pic['id']) + "/")
-            # if (len(pic['artist']) != 0):
-            #     artist = pic['artist']
-            #     x.add_field(name="Artist", value=artist)
             x.add_field(name="Score", value=pic['score'])
             x.add_field(name="URL", value=pic['file_url'])
             await ctx.send(embed = x)
