@@ -28,6 +28,7 @@ class GameInfoCog:
 "where platform is one of the following: `psn`, `xblive`, `steam`, `switch`, `3ds`.")
         else:
             emb.add_field(name="No " + arg[0] + " Found.", value="To set one, use `%set " + self.db_list[arg[0]] + " [arg]`.")
+            emb.set_footer(text="For help with game info commands, use %help gameinfo.")
         await ctx.send(embed=emb)
         
 
@@ -36,7 +37,7 @@ class GameInfoCog:
         emb = discord.Embed(colour=ctx.author.colour) 
         emb.set_author(name="Game Info for " + ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
         emb.set_footer(text="For help with game info commands, use %help gameinfo.")
-        keys = list(self.db_list.keys())
+        keys = ["PSN ID", "Xbox Live Gamertag", "Steam Account", "Switch Friend Code", "3DS Friend Code"]
         cursor.execute("SELECT * FROM game_info WHERE member={};".format("'" + str(ctx.author.id) + "'"))
         rows = cursor.fetchall()
         if not rows:
@@ -92,8 +93,8 @@ class GameInfoCog:
                 await ctx.send(embed=emb)
                 return False
         elif args[0] == 'steam':
-            if not re.match('^[0-9A-Za-z_]{3,64}$', args[1]):
-                emb.add_field(name="Invalid Steam Account", value="Steam account names are 3-64 characters long and contain only `a-z`, `A-Z`, `0-9` or `_` characters.")
+            if len(" ".join(args[1:])) > 64 or len(" ".join(args[1:])) < 3:
+                emb.add_field(name="Invalid Steam Account", value="Steam account must be 3-64 characters long.")
                 await ctx.send(embed=emb)
                 return False
         else:
@@ -121,18 +122,18 @@ class GameInfoCog:
             return
 
         info = args[1]
-        if args[0] == 'xblive':
-            info = " ".join(' '.join(args[1:]).split())
+        if args[0] == 'xblive' or args[0] == 'steam':
+            info = ' '.join(args[1:])
 
         cursor.execute("SELECT * FROM game_info WHERE member={};".format("'" + str(ctx.author.id) + "'"))
         rows = cursor.fetchall()
 
         if not rows:
-            cursor.execute('INSERT INTO game_info (member, {}) VALUES ({}, {});'.format(self.platforms[args[0]], "'"+str(ctx.author.id)+"'", "'"+info+"'"))
+            cursor.execute('INSERT INTO game_info (member, {}) VALUES ({}, {});'.format(self.platforms[args[0]], "'"+str(ctx.author.id)+"'", "'" + info + "'"))
         else:
-            cursor.execute('UPDATE game_info SET {} = {} WHERE member = {};'.format(self.platforms[args[0]], "'"+info+"'", "'"+str(ctx.author.id)+"'"))
+            cursor.execute('UPDATE game_info SET {} = {} WHERE member = {};'.format(self.platforms[args[0]], "'" + info + "'", "'"+str(ctx.author.id)+"'"))
 
-        emb.add_field(name="Successfully Added", value="{} successfully set as `{}`.".format(self.rev_dblist[args[0]], args[1]))
+        emb.add_field(name="Successfully Added", value="{} successfully set as `{}`.".format(self.rev_dblist[args[0]], info))
 
         await ctx.send(embed=emb)
 
