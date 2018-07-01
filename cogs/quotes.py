@@ -111,3 +111,6 @@ class QuoteCog:
 
 def setup(bot):
     bot.add_cog(QuoteCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(QuoteCog(bot))

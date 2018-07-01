@@ -146,6 +146,25 @@ class LastfmCog:
         if len(args) != 2:
             return
 
+        q_str = 'https://api.spotify.com/v1/search?q=track:{}%20artist:{}&type=track&limit=10&access_token={}'.format(args[0], args[1], self.token['access_token'])
+        results = requests.get(q_str)
+        results = results.json()
+        if len(results) > 0:
+            track_link = "http://open.spotify.com/track/" + results['tracks']['items'][0]['id']
+        await ctx.send(track_link)
+
+    @commands.command(enabled=False)
+    async def song(self, ctx, *, args):
+        await ctx.channel.trigger_typing()
+
+        if "-" not in args:
+            return
+
+        args = args.split(" - ")
+
+        if len(args) != 2:
+            return
+
         # Set up connection
         network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
         track = network.get_track(args[1], args[0])
@@ -181,3 +200,6 @@ class LastfmCog:
 
 def setup(bot):
     bot.add_cog(LastfmCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(LastfmCog(bot))

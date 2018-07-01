@@ -1,34 +1,12 @@
 import discord
 from discord.ext import commands
 import random
+import inspect
 
 
 class GeneralCog:
     def __init__(self, bot):
         self.bot = bot
-
-    async def _lastfm_help(self, ctx):
-        channel = ctx.message.author.dm_channel
-        if (channel == None):
-            channel = await ctx.message.author.create_dm()
-        await channel.trigger_typing()
-        lfm = """ `%artist [artist name]`\n Displays information on the given artist.\n
-`%top_albums [artist name]`\n Displays the top five albums by the given artist.\n
-`%top_tracks [artist name]`\n Displays the top five tracks by the given artist.\n
-`%album [album name] - [artist name]`\n Displays information on the given album as well as a tracklist.\n
-`%track [track name] - [artist name]`\n Displays information on the given track as well as a playable Spotify link.\n\u200b"""
-
-        msg = discord.Embed(description="The following is a list of Last.fm commands that can be used with Gary.", colour=0x33B5E5)
-        msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
-        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
-        msg.add_field(name="Last.fm Commands", value=lfm, inline=True)
-        await channel.send(embed=msg)
-
-    async def _help_redirect(self, ctx, args):
-        if args[0] == 'last.fm':
-            await self._lastfm_help(ctx)
-        else:
-            return
 
     @commands.command()
     async def userinfo(self, ctx, *args):
@@ -64,46 +42,6 @@ class GeneralCog:
         msg.add_field(name="Roles", value=", ".join(r.name for r in reversed(author.roles)))
 
         await ctx.send(embed=msg)
-
-    @commands.command()
-    async def help(self, ctx, *args):
-        if args:
-            await self._help_redirect(ctx, args)
-            return
-        channel = ctx.message.author.dm_channel
-        if (channel == None):
-            channel = await ctx.message.author.create_dm()
-        await channel.trigger_typing()
-
-        gen = """ `%help [string (optional)]`\n Displays this message. If given an argument, displays information on the given command(s). Valid arguments are:\n`last.fm` \n
-`%quote [id (optional)]`\n Displays the quote with the specified ID. If none is given, a random quote is returned.\n
-`%echo [string]`\n Repeats the text inputted by the user.\n
-`%vote`\n Initiates a vote using the 👍, 👎, and 🤔 reactions.\n
-`%roll [# sides (optional)]`\n Displays a random number in the given range (six by default).\n
-`%flip`\n Returns "Heads" or "Tails" at random.\n
-`%oracle`\n Magic 8-Ball.\n
-`%ud [word or phrase (optional)]`\n Returns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition.\n
-`%e621 [query]`\n Returns the top e621 image of the given query. Can only be used in #bot_spam (SFW) and #nsfw_pics (NSFW).\n\u200b"""
-
-        db = """ `%add [user] [quote]`\n Auxiliary only. Adds a new quote to Gary's list.\n
-`%delete [id]`\n Auxiliary only. Deletes a quote from Gary's list.\n
-`%ids`\n DMs the user a list of quotes and their IDs.\n\u200b"""
-
-        sprites = """`%pmd [pokedex #]`\n Displays the PMD icon of the given Pokemon.\n
-`%[pokemon game] [pokemon]`\n Displays the sprite of the given pokemon from the specified game. Valid commands are:
-`%rb`, `%yellow`, `%gold`, `%silver`, `%crystal`, `%rse`, `%frlg`, `%dppt`, `%hgss`, `%bw`, `%xy`, `%sm`.\n\u200b"""
-
-        users = """`%[user]`\n Displays the pokemon commonly associated with the specified user.
-If your name does not yet have a command, DM Sigma with the pokemon you want.\n\u200b"""
-
-        msg = discord.Embed(description="The following is a list of commands that can be used with Gary.", colour=0x33B5E5)
-        msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
-        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
-        msg.add_field(name="General Commands", value=gen, inline=True)
-        msg.add_field(name="Admin Commands", value=db, inline=True)
-        msg.add_field(name="Sprite Commands", value=sprites, inline=True)
-        msg.add_field(name="User Commands", value=users, inline=True)
-        await channel.send(embed = msg)
 
     @staticmethod
     async def _err_catch(ctx, err, format, desc):
@@ -200,13 +138,44 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
         await ctx.message.delete()
 
     @commands.command()
-    async def eval(self, ctx, *, args):
+    async def eval(self, ctx, *, code : str):
         is_mod = False
         for x in ctx.author.roles:
             if (x.name == "Auxiliary"):
                 is_mod = True
-        if (is_mod):
-            await ctx.send(eval(args))
+                break
+        if is_mod or ctx.author.id == 304980605207183370:
+
+            # Credit to Rapptz for the majority of this block of code
+
+            code = code.strip('` ')
+            python = '```py\n{}\n```'
+            result = None
+
+            env = {
+                'bot': self.bot,
+                'ctx': ctx,
+                'message': ctx.message,
+                'guild': ctx.guild,
+                'channel': ctx.channel,
+                'author': ctx.author
+            }
+
+            env.update(globals())
+
+            try:
+                result = eval(code, env)
+                if inspect.isawaitable(result):
+                    result = await result
+            except Exception as e:
+                 await ctx.send(python.format(type(e).__name__ + ': ' + str(e)))
+                 return
+
+            if len(python.format(result)):
+                await ctx.send("Output greater than 2000 characters.")
+                return
+            await ctx.send(python.format(result))
+
         else:
             await ctx.send("You do not have the correct permissions to use this command.")
 
@@ -250,3 +219,6 @@ If your name does not yet have a command, DM Sigma with the pokemon you want.\n\
 
 def setup(bot):
     bot.add_cog(GeneralCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(GeneralCog(bot))

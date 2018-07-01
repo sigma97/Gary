@@ -73,3 +73,6 @@ class LewdCog:
 
 def setup(bot):
     bot.add_cog(LewdCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(LewdCog(bot))

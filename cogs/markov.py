@@ -12,6 +12,9 @@ class MarkovCog:
     @staticmethod
     @client.event
     async def on_message(message):
+        if not message.guild or message.content.startswith('%'):
+            return
+            
         if (message.guild.id == 342025948113272833 or message.guild.id == 410225794904883202):
             file_path = "../logs/" + str(message.author.id) + ".txt"
             f = open(path.relpath(file_path), "a+")
@@ -30,3 +33,6 @@ class MarkovCog:
 
 def setup(bot):
     bot.add_cog(MarkovCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(MarkovCog(bot))

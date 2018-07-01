@@ -159,3 +159,6 @@ class SpriteCog:
 
 def setup(bot):
     bot.add_cog(SpriteCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(SpriteCog(bot))

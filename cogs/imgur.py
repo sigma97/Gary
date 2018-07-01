@@ -42,3 +42,6 @@ class ImgurCog:
 
 def setup(bot):
     bot.add_cog(ImgurCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(ImgurCog(bot))

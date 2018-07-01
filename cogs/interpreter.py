@@ -54,3 +54,6 @@ class InterpreterCog:
 
 def setup(bot):
     bot.add_cog(InterpreterCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(InterpreterCog(bot))

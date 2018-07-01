@@ -23,7 +23,7 @@ class UDCog:
 
     @staticmethod
     async def _given_word(ctx, args):
-        temp = u.define(args[0])
+        temp = u.define(args)
         if (len(temp) == 0):
             await ctx.send("This word or phrase could not be found on Urban Dictionary.")
         else:
@@ -50,8 +50,11 @@ class UDCog:
         if (len(args) == 0):
             await self._random_word(ctx)
         else:
-            await self._given_word(ctx, args)
+            await self._given_word(ctx, " ".join(args))
 
 
 def setup(bot):
     bot.add_cog(UDCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(UDCog(bot))

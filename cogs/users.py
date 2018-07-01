@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import random
 
 
 class UserCog:
@@ -27,7 +28,7 @@ class UserCog:
         y.set_image(url=x)
         await ctx.send(embed = y)
 
-    @commands.command(aliases=["odd"])
+    @commands.command(aliases=["odd", "yaoi_lover"])
     async def oddball(self, ctx):
         x = "https://play.pokemonshowdown.com/sprites/xyani/slowpoke.gif"
         y = discord.Embed()
@@ -68,6 +69,20 @@ class UserCog:
         y = discord.Embed()
         y.set_image(url=x)
         await ctx.send(embed = y)
+
+    @commands.command()
+    async def feed_vap(self, ctx):
+        await ctx.send(random.choice([":apple:", ":green_apple:", ":pear:", ":tangerine:", ":lemon:", ":banana:",
+                                     ":watermelon:", ":grapes:", ":strawberry:", ":melon:", ":cherries:", ":peach:",
+                                     ":pineapple:", ":tomato:", ":eggplant:", ":hot_pepper:", ":corn:", ":sweet_potato:",
+                                     ":bread:", ":cheese:", ":poultry_leg:", ":meat_on_bone:", ":fried_shrimp:", ":hamburger:",
+                                     ":fries:", ":hotdog:", ":pizza:", ":spaghetti:", ":taco:", ":burrito:", ":ramen:",
+                                     ":stew:", ":sushi:", ":bento:", ":curry:", ":rice_ball:", ":rice:", ":rice_cracker:",
+                                     ":oden:", ":dango:", ":shaved_ice:", ":ice_cream:", ":icecream:", ":cake:", ":birthday:",
+                                     ":custard:", ":candy:", ":lollipop:", ":chocolate_bar:", ":popcorn:", ":doughnut:",
+                                     ":cookie:", ":croissant:", ":avocado:", ":cucumber:", ":bacon:", ":potato:", ":carrot:",
+                                     ":french_bread:", ":salad:", ":paella:", ":stuffed_pita:", ":peanuts:", ":kiwi:",
+                                     ":pancakes:"]))
 
     @commands.command()
     async def ama(self, ctx):
@@ -342,5 +357,12 @@ class UserCog:
         y.set_image(url=x)
         await ctx.send(embed = y)
 
+    @commands.command()
+    async def cock(self, ctx):
+        await ctx.send(":chicken:")
+
 def setup(bot):
     bot.add_cog(UserCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(UserCog(bot))

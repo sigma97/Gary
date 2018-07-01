@@ -68,3 +68,6 @@ class TriviaCog:
 
 def setup(bot):
     bot.add_cog(TriviaCog(bot))
+
+def teardown(bot):
+    bot.remove_cog(TriviaCog(bot))
