@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import random
 import inspect
+from cogs.utils import checks
 
 
 class GeneralCog:
@@ -90,16 +91,24 @@ class GeneralCog:
         await ctx.send(random.choice(responses))
 
     @commands.command()
-    async def bigtext(self, ctx, *args):
-        channel = self.bot.get_channel(427941608428797954)
+    async def bigtext(self, ctx, *, args):
+        if ctx.guild.id == 342025948113272833:
+            channel = self.bot.get_channel(427941608428797954)
+        elif ctx.guild.id == 484966083795746816:
+            channel = self.bot.get_channel(485964599401644045)
+
         if not args:
             err = "Missing required argument."
             format = "%echo [string]"
             desc = "The %echo command repeats the text inputted by the user.."
             await self._err_catch(ctx, err, format, desc)
             return
-        args = " ".join(args)
-        echo_log = "**" + ctx.author.name + ":** " + args
+
+        echo_log = discord.Embed(colour=0x33B5E5)
+        echo_log.set_author(name="Gary's Echo Log", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        echo_log.add_field(name="Author", value=ctx.author.mention, inline=False)
+        echo_log.add_field(name="Type", value="Big Text", inline=False)
+        echo_log.add_field(name="Message", value=args)
         str = []
         args = args.lower()
 
@@ -118,23 +127,37 @@ class GeneralCog:
 
         str = "".join(str)
         await ctx.send(str)
-        await channel.send(echo_log)
+        await channel.send(embed=echo_log)
         await ctx.message.delete()
 
 
     @commands.command()
-    async def echo(self, ctx, *args):
-        channel = self.bot.get_channel(427941608428797954)
+    async def echo(self, ctx, *, args):
+        if ctx.guild.id == 342025948113272833:
+            channel = self.bot.get_channel(427941608428797954)
+        elif ctx.guild.id == 484966083795746816:
+            channel = self.bot.get_channel(485964599401644045)
+
         if not args:
             err = "Missing required argument."
             format = "%echo [string]"
             desc = "The %echo command repeats the text inputted by the user.."
             await self._err_catch(ctx, err, format, desc)
             return
-        arg = " ".join(args)
-        echo_log = "**" + ctx.author.name + ":** " + arg
-        await ctx.send(arg)
-        await channel.send(echo_log)
+
+        echo_log = discord.Embed(colour=0x33B5E5)
+        echo_log.set_author(name="Gary's Echo Log", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        echo_log.add_field(name="Author", value=ctx.author.mention, inline=False)
+        echo_log.add_field(name="Type", value="Echo", inline=False)
+        echo_log.add_field(name="Message", value=args)
+
+        await ctx.send(args)
+
+        try:
+            await channel.send(embed=echo_log)
+        except:
+            pass
+
         await ctx.message.delete()
 
     @commands.command()
@@ -180,18 +203,26 @@ class GeneralCog:
             await ctx.send("You do not have the correct permissions to use this command.")
 
     @commands.command()
-    async def vote(self, ctx, *args):
-        channel = self.bot.get_channel(427941608428797954)
+    async def vote(self, ctx, *, args):
+        if ctx.guild.id == 342025948113272833:
+            channel = self.bot.get_channel(427941608428797954)
+        elif ctx.guild.id == 484966083795746816:
+            channel = self.bot.get_channel(485964599401644045)
+
         if not args:
             err = "Missing required argument."
             format = "%vote [string]"
             desc = "The %vote command initiates a vote using the 👍, 👎, and 🤔 reactions."
             await self._err_catch(ctx, err, format, desc)
             return
-        arg = " ".join(args)
-        echo_log = "**" + ctx.author.name + ":** " + arg
-        msg = await ctx.send(arg)
-        await channel.send(echo_log)
+
+        echo_log = discord.Embed(colour=0x33B5E5)
+        echo_log.set_author(name="Gary's Echo Log", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        echo_log.add_field(name="Author", value=ctx.author.mention, inline=False)
+        echo_log.add_field(name="Type", value="Vote", inline=False)
+        echo_log.add_field(name="Message", value=args)
+        msg = await ctx.send(args)
+        await channel.send(embed=echo_log)
         await ctx.message.delete()
         await msg.add_reaction('👍')
         await msg.add_reaction('👎')
@@ -206,6 +237,7 @@ class GeneralCog:
         if (ctx.channel.name == "the_wall" and is_mod):
             await ctx.channel.purge()
 
+    @checks.is_trh()
     @commands.command()
     async def clearthepins(self, ctx):
         is_mod = False
@@ -215,6 +247,57 @@ class GeneralCog:
                 break
         if (is_mod):
             await ctx.send("<@!147488112770023424> CLEAR THE DAMN PINS")
+
+    @commands.command()
+    async def feed_tat(self, ctx):
+        await ctx.send(str(random.choice(self.bot.emojis)))
+
+    @checks.is_trh()
+    @commands.command()
+    async def feed_nape(self, ctx):
+        await ctx.send(":banana:")
+
+    @commands.command()
+    async def role(self, ctx, *args):
+        if args[1].lower() not in ['nsfw']:
+            await ctx.send("This role cannot be added by Gary.")
+            return
+
+        if not isinstance(ctx.channel, discord.DMChannel):
+            await ctx.send("Please only use this command in DMs.")
+            return
+
+        guild = self.bot.get_guild(484966083795746816)
+
+        if args[0] == 'add':
+            for r in guild.roles:
+                if r.name.lower() == args[1].lower():
+
+                    try:
+                        user = guild.get_member(ctx.author.id)
+                    except:
+                        await ctx.send("You are not currently in The Bat Cave.")
+                        return
+
+                    await user.add_roles(r)
+                    await ctx.send("The `{}` role as been added!".format(r.name))
+                    return
+
+        elif args[0] == 'remove':
+            for r in guild.roles:
+                if r.name.lower() == args[1].lower():
+
+                    try:
+                        user = guild.get_member(ctx.author.id)
+                    except:
+                        await ctx.send("You are not currently in The Bat Cave.")
+                        return
+
+                    await user.remove_roles(r)
+                    await ctx.send("The `{}` role as been removed!".format(r.name))
+                    return
+        else:
+            await ctx.send("The given role does not exist in The Bat Cave.")
 
 
 def setup(bot):

@@ -3,6 +3,7 @@ from discord.ext import commands
 import requests
 import json
 import pylast
+import spotipy
 from cogs.utils.spotify_key import client_id, API_KEY, API_SECRET
 
 class LastfmCog:
@@ -13,6 +14,17 @@ class LastfmCog:
             data={'grant_type': 'client_credentials'},
             auth=client_id)
         self.token = token.json()
+    
+    async def on_timer_update(self, seconds):
+
+        if seconds % 3600 == 0 and seconds != 0:
+
+            token = requests.post(
+            'https://accounts.spotify.com/api/token',
+            data={'grant_type': 'client_credentials'},
+            auth=client_id)
+
+            self.token = token.json()
 
     @commands.command()
     async def artist(self, ctx, *args):
@@ -175,11 +187,11 @@ class LastfmCog:
         s = int((duration/1000)%60)
 
         # Grab the Spotify link
-        q_str = 'https://api.spotify.com/v1/search?q=track:{}%20artist:{}&type=track&limit=10&access_token={}'.format(args[0], args[1], self.token['access_token'])
-        results = requests.get(q_str)
-        results = results.json()
-        if len(results) > 0:
-            track_link = "http://open.spotify.com/track/" + results['tracks']['items'][0]['id']
+        # q_str = 'https://api.spotify.com/v1/search?q=track:{}%20artist:{}&type=track&limit=10&access_token={}'.format(args[0], args[1], self.token['access_token'])
+        # results = requests.get(q_str)
+        # results = results.json()
+        # if len(results) > 0:
+        #     track_link = "http://open.spotify.com/track/" + results['tracks']['items'][0]['id']
 
         # Build the embed
         embed = discord.Embed(colour=0xd51007)
@@ -195,7 +207,7 @@ class LastfmCog:
 
         embed.set_footer(text="For help with Last.fm commands, use %help last.fm.")
         await ctx.send(embed=embed)
-        await ctx.send(track_link)
+        # await ctx.send(track_link)
 
 
 def setup(bot):

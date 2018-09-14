@@ -12,9 +12,7 @@ class ImgurCog:
     async def _images(self, ctx, id):
         album = self.client.get_album_images(id)
         image = random.choice(album)
-        embed = discord.Embed()
-        embed.set_image(url=image.link)
-        await ctx.send(embed=embed)
+        await ctx.send(image.link)
 
     @commands.command()
     async def baned(self, ctx):
@@ -39,6 +37,14 @@ class ImgurCog:
     @commands.command(aliases=["serp", "snek"])
     async def serperior(self, ctx):
         await self._images(ctx, 'jRy06di')
+
+    @commands.command(aliases=["puppo", "doggo", "pupper", "woofer", "pup"])
+    async def dog(self, ctx):
+        await self._images(ctx, 'vgW1p')
+
+    @commands.command()
+    async def zor(self, ctx):
+        await self._images(ctx, 'keNO42K')
 
 def setup(bot):
     bot.add_cog(ImgurCog(bot))

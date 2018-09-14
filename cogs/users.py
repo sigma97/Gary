@@ -30,7 +30,7 @@ class UserCog:
 
     @commands.command(aliases=["odd", "yaoi_lover"])
     async def oddball(self, ctx):
-        x = "https://play.pokemonshowdown.com/sprites/xyani/slowpoke.gif"
+        x = "https://play.pokemonshowdown.com/sprites/xyani/zweilous.gif"
         y = discord.Embed()
         y.set_image(url=x)
         await ctx.send(embed = y)
@@ -161,9 +161,9 @@ class UserCog:
         y.set_image(url=x)
         await ctx.send(embed = y)
 
-    @commands.command(aliases=["meth", "mawile", "maw"])
+    @commands.command(aliases=["meth", "mawile", "maw", "mawie"])
     async def metheria(self, ctx):
-        x = "https://play.pokemonshowdown.com/sprites/xyani/mawile.gif"
+        x = "http://play.pokemonshowdown.com/sprites/xyani-shiny/mawile.gif"
         y = discord.Embed()
         y.set_image(url=x)
         await ctx.send(embed = y)
@@ -353,6 +353,62 @@ class UserCog:
     @commands.command()
     async def tat(self, ctx):
         x = "http://play.pokemonshowdown.com/sprites/xyani/zorua.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def bat(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/zoroark.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def orn(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/decidueye.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def jux(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/luxray.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def flare(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/flareon.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+    
+    @commands.command()
+    async def ko(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani-shiny/zorua.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def matt(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/meowstic-m.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def tai(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/volcarona.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command(aliases=['evan'])
+    async def inevanable(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/maractus.gif"
         y = discord.Embed()
         y.set_image(url=x)
         await ctx.send(embed = y)

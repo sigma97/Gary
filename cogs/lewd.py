@@ -57,7 +57,7 @@ class LewdCog:
             pic = await self._e6_sfw(ctx, args)
 
         if (pic.file_url == None):
-            await ctx.send("An image matching this query could not be found on E621.")
+            await ctx.send("An image matching this query could not be found on e621.")
         else:
             x = discord.Embed(title="#" + pic.id + ": " + pic.author, url="https://e621.net/post/show/" + pic.id + "/", colour=0x453399)
             x.set_author(name="e621", icon_url="http://i0.kym-cdn.com/entries/icons/original/000/016/852/e621_logo.png")
