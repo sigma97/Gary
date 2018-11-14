@@ -3,7 +3,7 @@ from discord.ext import commands
 import psycopg2
 import re
 
-
+# Initialize database
 conn = psycopg2.connect(dbname="quotes")
 cursor = conn.cursor()
 
@@ -20,8 +20,10 @@ class GameInfoCog:
                         "Steam Account": "steam",
                         "Switch Friend Code": "switch",
                         "3DS Friend Code": "3ds"}
+        # reverse of above
         self.rev_dblist = {y: x for x, y in self.db_list.items()}
 
+    # Gameinfo not found in the database
     async def _notfound(self, ctx, emb, *arg):
         if not arg:
             emb.add_field(name="No Game Info Found.", value="To set gameinfo, use `%set [platform] [arg]`, " +
@@ -32,6 +34,7 @@ class GameInfoCog:
         await ctx.send(embed=emb)
         
 
+    # Gets all of the user's gameinfo
     @commands.command()
     async def gameinfo(self, ctx):
         emb = discord.Embed(colour=ctx.author.colour) 
@@ -49,6 +52,8 @@ class GameInfoCog:
                 emb.add_field(name=keys[i], value=row[i+1])
         await ctx.send(embed=emb)
 
+
+    # Gets the gameinfo for a specific platform
     @commands.command()
     async def get(self, ctx, arg):
         emb = discord.Embed(colour=ctx.author.colour) 
@@ -77,11 +82,14 @@ class GameInfoCog:
 
         await ctx.send(embed=emb)
 
+
+    # Checks if the given username/code to be added is the correct format
     async def _input_validator(self, ctx, *args):
         emb = discord.Embed(colour=ctx.author.colour)
         emb.set_author(name="Game Info for " + ctx.author.name + "#" + ctx.author.discriminator, icon_url=ctx.author.avatar_url)
         emb.set_footer(text="For help with game info commands, use %help gameinfo.")
 
+        # Regex matching to check input
         if args[0] == 'psn':
             if not re.match('^[0-9A-Za-z_-]{3,16}$', args[1]):
                 emb.add_field(name="Invalid Playstation Network ID", value="Playstation Network IDs are 3-16 characters long and contain only `a-z`, `A-Z`, `0-9`, `_` or `-` characters.")
@@ -105,6 +113,7 @@ class GameInfoCog:
         return True
 
 
+    # Sets info for a specific platform
     @commands.command()
     async def set(self, ctx, *args):
         emb = discord.Embed(colour=ctx.author.colour)

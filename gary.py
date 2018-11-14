@@ -10,6 +10,7 @@ import traceback
 
 loop = asyncio.get_event_loop()
 
+# Set up logging
 log = logging.getLogger()
 log.setLevel(logging.WARNING)
 handler = logging.FileHandler(filename='gary.log', encoding='utf-8', mode='a')
@@ -19,6 +20,7 @@ log.addHandler(handler)
 
 log.info("Bot instance started.")
 
+# Formatting logs
 def log_exc(ctx, error):
     st = StringIO()
     if ctx.command:
@@ -31,6 +33,7 @@ def log_exc(ctx, error):
 
     log.exception('{0.__class__.__name__}: {0}'.format(error), exc_info=error)
 
+    # DM me if I created the error
     if ctx.author.id == 304980605207183370:
         if isinstance(error, commands.CommandInvokeError):
             error = error.original
@@ -38,7 +41,7 @@ def log_exc(ctx, error):
             error, st.getvalue() if len(st.getvalue()) < 2000 else "")
         ctx.bot.loop.create_task(ctx.message.author.send(exc_output))
 
-
+# Client instance
 client = discord.Client()
 bot = commands.Bot(command_prefix='%', pm_help=True)
 
@@ -65,6 +68,7 @@ async def on_ready():
     print('------')
     await bot.change_presence(activity=discord.Game(name='%help'))
 
+# Error handler
 @bot.event
 async def on_command_error(ctx, error):
 
@@ -98,6 +102,7 @@ async def on_command_error(ctx, error):
 
     await ctx.send(embed=emb)
 
+# Adds designated base role on member join if there is one.
 @bot.event
 async def on_member_join(member):
 
@@ -114,10 +119,12 @@ async def on_member_join(member):
     if role:
         await member.add_roles(role)
 
+# Timer listener for time-sensitive events
 @bot.listen()
 async def timer_update(secs):
     return secs
 
+# Creates timer using asyncio, dispatches timer_update event to all loaded cogs
 async def start_timer(bot):
 
     await bot.wait_until_ready()
@@ -125,6 +132,7 @@ async def start_timer(bot):
     bot.seconds = 0
     seconds = 0
 
+    # Infinite loop so timer constantly runs
     while True:
         bot.dispatch("timer_update", seconds)
         await timer_update(seconds)
@@ -132,6 +140,7 @@ async def start_timer(bot):
         bot.seconds = seconds
         await asyncio.sleep(1)
 
+# Sets or unsets DEBUG mode for the logger (which is actually just INFO level)
 @bot.command(aliases=['debug'])
 @checks.is_superuser()
 async def set_debug(ctx):
@@ -143,7 +152,7 @@ async def set_debug(ctx):
         log.setLevel(logging.WARNING)
         await ctx.send("Unset debug mode.")
 
-
+# Loads up a cog
 @bot.command()
 @checks.is_superuser()
 async def load_cog(ctx, arg):
@@ -157,6 +166,7 @@ async def load_cog(ctx, arg):
     else:
         await ctx.send("You do not have the correct permissions to use this command.")
 
+# Unloads a currently loaded cog
 @bot.command()
 @checks.is_superuser()
 async def unload_cog(ctx, arg):
@@ -170,7 +180,7 @@ async def unload_cog(ctx, arg):
     else:
         await ctx.send("You do not have the correct permissions to use this command.")
 
-
+# Init
 if __name__ == '__main__':
     for e in extensions:
         bot.load_extension(e)
