@@ -8,6 +8,7 @@ cogs/utils/imgur_key.py
 cogs/markov.py
 cogs/lewd.py
 cogs/users.py
+requirements.txt
 *.py[cod]
 *$py.class
 
