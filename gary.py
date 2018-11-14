@@ -1,3 +1,11 @@
+'''
+Gary.py
+Written By bshea03 (sigma97)
+
+Started as a test bot for a private discord server but soon became a
+multi-purpose bot used to help me develop my Python skills.
+'''
+
 import discord
 import asyncio
 import sys
@@ -54,7 +62,6 @@ extensions = ['cogs.quotes',
               'cogs.interpreter',
               'cogs.markov',
               'cogs.ud',
-              'cogs.lewd',
               'cogs.trivia',
               'cogs.lastfm',
               'cogs.imgur',
