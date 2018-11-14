@@ -42,7 +42,7 @@ class UserCog:
         y.set_image(url=x)
         await ctx.send(embed = y)
 
-    @commands.command(aliases=["fluff"])
+    @commands.command(aliases=["fluff", "dork"])
     async def fluffy(self, ctx):
         x = "https://play.pokemonshowdown.com/sprites/xyani/leafeon.gif"
         y = discord.Embed()
@@ -414,8 +414,54 @@ class UserCog:
         await ctx.send(embed = y)
 
     @commands.command()
+    async def lectro(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/noivern.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command(aliases=['arc'])
+    async def arcono(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/zoroark.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def luc(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/lucario.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def delta(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/buizel.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command(aliases=['shep'])
+    async def ngb(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/ampharos.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
+    async def lalo(self, ctx):
+        x = "http://play.pokemonshowdown.com/sprites/xyani/riolu.gif"
+        y = discord.Embed()
+        y.set_image(url=x)
+        await ctx.send(embed = y)
+
+    @commands.command()
     async def cock(self, ctx):
         await ctx.send(":chicken:")
+
+    @commands.command()
+    async def pussy(self, ctx):
+        await ctx.send(":cat:")
 
 def setup(bot):
     bot.add_cog(UserCog(bot))

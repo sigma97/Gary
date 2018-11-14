@@ -30,11 +30,15 @@ class LewdCog:
             args = args.replace(" random", "")
             if (len(args.split(" ")) == 4):
                 pic = e.getdata(args + " order:random" + " -rating:s")
+            elif len(args.split(" ")) > 4:
+                pic = None
             else:
                 pic = e.getdata(args + " order:random" + " -rating:s -scat")
         else:
-            if (len(args.split(" ")) == 5):
+            if len(args.split(" ")) == 5:
                 pic = e.getdata(args + " -rating:s")
+            elif len(args.split(" ")) > 5:
+                pic = None
             else:
                 pic = e.getdata(args + " -rating:s -scat")
         return pic
@@ -42,22 +46,34 @@ class LewdCog:
     @staticmethod
     async def _e6_sfw(ctx, args):
         if "random" in args:
-            args = args.replace("random", "")
-            pic = e.getdata(args + " order:random" + " rating:s")
+            if len(args.split(" ")) <= 4:
+                args = args.replace("random", "")
+                pic = e.getdata(args + " order:random" + " rating:s")
+            else:
+                pic = None
         else:
-            pic = e.getdata(args + " rating:s")
+            if len(args.split(" ")) <= 5:
+                pic = e.getdata(args + " rating:s")
+            else: 
+                pic = None
         return pic
 
     @commands.command(aliases=["e6"])
     async def e621(self, ctx, *, args):
         await ctx.channel.trigger_typing()
+
         if ((isinstance(ctx.channel, discord.TextChannel) and ctx.channel.is_nsfw()) or isinstance(ctx.channel, discord.abc.PrivateChannel)):
             pic = await self._e6_nsfw(ctx, args)
-        elif (ctx.channel.name == "bot_spam" or ctx.channel.name == "spam"):
+        else:
             pic = await self._e6_sfw(ctx, args)
 
-        if (pic.file_url == None):
+        if pic == None:
+            await ctx.send("Your query contains too many arguments.")
+            return
+        elif (pic.file_url == None):
             await ctx.send("An image matching this query could not be found on e621.")
+            return
+
         else:
             x = discord.Embed(title="#" + pic.id + ": " + pic.author, url="https://e621.net/post/show/" + pic.id + "/", colour=0x453399)
             x.set_author(name="e621", icon_url="http://i0.kym-cdn.com/entries/icons/original/000/016/852/e621_logo.png")

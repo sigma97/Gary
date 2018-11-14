@@ -2,7 +2,10 @@ import discord
 from discord.ext import commands
 from imgurpython import ImgurClient
 import random
+import logging
 from cogs.utils.imgur_key import client_id, client_key
+
+log = logging.getLogger()
 
 class ImgurCog:
     def __init__(self, bot):
@@ -10,7 +13,13 @@ class ImgurCog:
         self.client = ImgurClient(client_id, client_key)
 
     async def _images(self, ctx, id):
-        album = self.client.get_album_images(id)
+
+        try:
+            album = self.client.get_album_images(id)
+        except:
+            log.error("'ImgurCog' - An error occurred while searching for the requested album.")
+            return
+
         image = random.choice(album)
         await ctx.send(image.link)
 
@@ -45,6 +54,10 @@ class ImgurCog:
     @commands.command()
     async def zor(self, ctx):
         await self._images(ctx, 'keNO42K')
+
+    @commands.command()
+    async def heck(self, ctx):
+        await self._images(ctx, 'FGa8rSl')
 
 def setup(bot):
     bot.add_cog(ImgurCog(bot))

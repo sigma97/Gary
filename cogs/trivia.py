@@ -4,6 +4,9 @@ import requests
 import json
 import asyncio
 import string
+import logging
+
+log = logging.getLogger()
 
 class TriviaCog:
     def __init__(self, bot):
@@ -18,24 +21,25 @@ class TriviaCog:
 
         try:
             await self.bot.wait_for('message', timeout=30.0, check=check)
-            await ctx.channel.trigger_typing()
-            embed = discord.Embed(colour=0x0070bc)
-            embed.add_field(name="Answer", value=data[0]['answer'])
-            embed.set_author(name="Trivia", icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0JfbhsC-kZOM8URtBLcqj08f8H3JtdbkEpBlCGemS5SqNhNay")
-            await ctx.send(embed=embed)
         except asyncio.TimeoutError:
-            await ctx.channel.trigger_typing()
-            embed = discord.Embed(colour=0x0070bc)
-            embed.add_field(name="Answer", value=data[0]['answer'])
-            embed.set_author(name="Trivia", icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0JfbhsC-kZOM8URtBLcqj08f8H3JtdbkEpBlCGemS5SqNhNay")
-            await ctx.send(embed=embed)
+            pass
+
+        embed = discord.Embed(colour=0x0070bc)
+        embed.add_field(name="Answer", value=data[0]['answer'])
+        embed.set_author(name="Trivia", icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0JfbhsC-kZOM8URtBLcqj08f8H3JtdbkEpBlCGemS5SqNhNay")
+        
+        await ctx.send(embed=embed)
 
     # Connects to the API, sends a random question
     async def _conn(self, ctx):
         param = {"count": 1}
-        response = requests.get("http://jservice.io/api/random", params=param)
-        raw_data = response.content.decode("utf-8")
-        data = json.loads(raw_data)
+
+        try:
+            response = requests.get("http://jservice.io/api/random", params=param)
+            raw_data = response.content.decode("utf-8")
+            data = json.loads(raw_data)
+        except:
+            log.error("'TriviaCog' - An error ocurred while fetching a trivia question.")
 
         # Recurse if NoneType
         if data[0]['value'] is None:
@@ -44,10 +48,17 @@ class TriviaCog:
 
         # Keeps searching until value <= 500
         while data[0]['value'] > 500:
-            response = requests.get("http://jservice.io/api/random", params=param)
-            raw_data = response.content.decode("utf-8")
-            data = json.loads(raw_data)
+
+            try:
+                response = requests.get("http://jservice.io/api/random", params=param)
+                raw_data = response.content.decode("utf-8")
+                data = json.loads(raw_data)
+            except:
+                log.error("'TriviaCog' - An error ocurred while fetching a trivia question.")
+
             if data[0]['value'] is None:
+                log.warning("'TriviaCog' - Unexpected null value in request response, recalling command.")
+
                 await self._conn(ctx)
                 return
 
@@ -64,6 +75,7 @@ class TriviaCog:
     @commands.command(hidden=True)
     async def trivia(self, ctx):
         await ctx.channel.trigger_typing()
+
         await self._conn(ctx)
 
 def setup(bot):

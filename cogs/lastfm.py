@@ -4,7 +4,10 @@ import requests
 import json
 import pylast
 import spotipy
+import logging
 from cogs.utils.spotify_key import client_id, API_KEY, API_SECRET
+
+log = logging.getLogger()
 
 class LastfmCog:
     def __init__(self, bot):
@@ -14,10 +17,14 @@ class LastfmCog:
             data={'grant_type': 'client_credentials'},
             auth=client_id)
         self.token = token.json()
+
+        self.network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
     
     async def on_timer_update(self, seconds):
 
         if seconds % 3600 == 0 and seconds != 0:
+
+            self.network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
 
             token = requests.post(
             'https://accounts.spotify.com/api/token',
@@ -25,16 +32,22 @@ class LastfmCog:
             auth=client_id)
 
             self.token = token.json()
+            
 
     @commands.command()
-    async def artist(self, ctx, *args):
+    async def artist(self, ctx, *, args):
         await ctx.channel.trigger_typing()
 
-        # Set up the connection
-        network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
-        args = " ".join(args)
-        artist = network.get_artist(args)
-        artist_tags = artist.get_top_tags()
+        try:
+            artist = self.network.get_artist(args)
+            artist_tags = artist.get_top_tags()
+        except pylast.WSError:
+            await ctx.send("Artist not found.")
+            return
+        except Exception as e:
+            log.error("'LastfmCog' - An error occurred while fetching the artist.\n{}".format(e))
+            return
+
         artist_summary = artist.get_bio_summary().split('<a')[0].rstrip()
         artist_url = artist.get_url()
         tag_list = []
@@ -61,14 +74,19 @@ class LastfmCog:
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def top_albums(self, ctx, *args):
+    async def top_albums(self, ctx, *, args):
         await ctx.channel.trigger_typing()
 
         # Set up connection
-        network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
-        args = " ".join(args)
-        artist = network.get_artist(args)
-        albums = artist.get_top_albums(limit=5)
+        try:
+            artist = self.network.get_artist(args)
+            albums = artist.get_top_albums(limit=5)
+        except pylast.WSError:
+            await ctx.send("Artist not found.")
+            return
+        except Exception as e:
+            log.error("'LastfmCog' - An error occurred while fetching the artist.\n{}".format(e))
+            return
 
         # Build the embed
         embed = discord.Embed(title="__Top albums by " + args.title() + "__", colour=0xd51007)
@@ -84,14 +102,19 @@ class LastfmCog:
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def top_tracks(self, ctx, *args):
+    async def top_tracks(self, ctx, *, args):
         await ctx.channel.trigger_typing()
 
         # Set up connection
-        network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
-        args = " ".join(args)
-        artist = network.get_artist(args)
-        tracks = artist.get_top_tracks(limit=5)
+        try:
+            artist = self.network.get_artist(args)
+            tracks = artist.get_top_tracks(limit=5)
+        except pylast.WSError:
+            await ctx.send("Artist not found.")
+            return
+        except Exception as e:
+            log.error("'LastfmCog' - An error occurred while fetching the artist.\n{}".format(e))
+            return
 
         # Build the embed
         embed = discord.Embed(title="__Top tracks by " + args.title() + "__", colour=0xd51007)
@@ -119,8 +142,15 @@ class LastfmCog:
             return
 
         # Set up connecton
-        network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
-        album = network.get_album(args[1], args[0])
+        try:
+            album = self.network.get_album(args[1], args[0])
+            album.get_playcount()
+        except pylast.WSError:
+            await ctx.send("Album not found.")
+            return
+        except Exception as e:
+            log.error("'LastfmCog' - An error occurred while fetching the album.\n{}".format(e))
+            return
 
         # Build the embed
         embed = discord.Embed(colour=0xd51007)
@@ -153,61 +183,31 @@ class LastfmCog:
         if "-" not in args:
             return
 
-        args = args.split(" - ")
+        args = args.split("-")
+
+        args[0] = args[0].strip()
+        args[1] = args[1].strip()
 
         if len(args) != 2:
             return
 
         q_str = 'https://api.spotify.com/v1/search?q=track:{}%20artist:{}&type=track&limit=10&access_token={}'.format(args[0], args[1], self.token['access_token'])
+
         results = requests.get(q_str)
         results = results.json()
-        if len(results) > 0:
-            track_link = "http://open.spotify.com/track/" + results['tracks']['items'][0]['id']
-        await ctx.send(track_link)
 
-    @commands.command(enabled=False)
-    async def song(self, ctx, *, args):
-        await ctx.channel.trigger_typing()
+        try: 
+            if not results['tracks']['items']:
+                await ctx.send("Track not found.")
+                return
 
-        if "-" not in args:
-            return
+            if len(results) > 0:
+                track_link = "http://open.spotify.com/track/" + results['tracks']['items'][0]['id']
+            await ctx.send(track_link)
 
-        args = args.split(" - ")
-
-        if len(args) != 2:
-            return
-
-        # Set up connection
-        network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
-        track = network.get_track(args[1], args[0])
-        album = track.get_album()
-        summary = track.get_wiki_summary()
-        duration = track.get_duration()
-        m = int(duration/60000)
-        s = int((duration/1000)%60)
-
-        # Grab the Spotify link
-        # q_str = 'https://api.spotify.com/v1/search?q=track:{}%20artist:{}&type=track&limit=10&access_token={}'.format(args[0], args[1], self.token['access_token'])
-        # results = requests.get(q_str)
-        # results = results.json()
-        # if len(results) > 0:
-        #     track_link = "http://open.spotify.com/track/" + results['tracks']['items'][0]['id']
-
-        # Build the embed
-        embed = discord.Embed(colour=0xd51007)
-        embed.set_author(name="Last.fm", icon_url="http://icons.iconarchive.com/icons/sicons/basic-round-social/512/last.fm-icon.png")
-        embed.add_field(name="Track", value=args[0].title(), inline=False)
-        embed.add_field(name="Artist", value=track.get_artist().get_name().title(), inline=False)
-        embed.add_field(name="Album", value=track.get_album().get_title(), inline=False)
-        if album:
-            embed.set_thumbnail(url=album.get_cover_image())
-        embed.add_field(name="Duration", value="`{}:{}`".format(m,str(s).zfill(2)), inline=False)
-        if summary:
-            embed.add_field(name="Description", value=summary.split('<a')[0].rstrip() + "\n[Read More on Last.fm!]({})".format(track.get_url() + '/+wiki'), inline=False)
-
-        embed.set_footer(text="For help with Last.fm commands, use %help last.fm.")
-        await ctx.send(embed=embed)
-        # await ctx.send(track_link)
+        except:
+            log.error("'LastfmCog' - An error occurred while fetching the song.")
+            await ctx.send("An error occurred.")
 
 
 def setup(bot):

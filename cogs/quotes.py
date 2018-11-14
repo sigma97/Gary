@@ -4,7 +4,6 @@ import psycopg2
 import random
 from cogs.utils import checks
 
-
 conn = psycopg2.connect(dbname="quotes")
 cursor = conn.cursor()
 
@@ -14,10 +13,12 @@ class QuoteCog:
 
     @commands.command()
     async def quotes(self, ctx, *args):
-        if ctx.guild.id == 342025948113272833:
+        if ctx.guild.id == 342025948113272833 or ctx.guild.id == 410225794904883202:
             cursor.execute("SELECT * FROM quotes WHERE username={} ORDER BY id".format("'" + args[0].title() + "'"))
         elif ctx.guild.id == 484966083795746816:
             cursor.execute("SELECT * FROM tbc_quotes WHERE username={} ORDER BY id".format("'" + args[0].title() + "'"))
+        else:
+            return
 
         rows = cursor.fetchall()
         lst = []
@@ -44,9 +45,9 @@ class QuoteCog:
 
 
     @commands.command()
-    async def quote(self, ctx, *args):
+    async def quote(self, ctx, *args: int):
 
-        if ctx.guild.id == 342025948113272833:
+        if ctx.guild.id == 342025948113272833 or ctx.guild.id == 410225794904883202:
             q = "quotes"
         elif ctx.guild.id == 484966083795746816:
             q = "tbc_quotes"
@@ -90,7 +91,7 @@ class QuoteCog:
         if (is_mod):
             cursor.execute("SELECT * from {} ORDER BY id DESC".format(q))
             rows = cursor.fetchall()[0]
-            cursor.execute("INSERT INTO {} (username, quote, id) VALUES ('{}', '{}', {})".format(q, arg1, arg2, rows[2]) + 1)
+            cursor.execute("INSERT INTO {} (username, quote, id) VALUES ('{}', '{}', {})".format(q, arg1, arg2, str(rows[2] + 1)))
             conn.commit()
             await ctx.send("Quote added!")
         else:

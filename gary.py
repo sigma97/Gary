@@ -1,7 +1,43 @@
 import discord
 import asyncio
+import sys
 import cogs.utils.key as key
 from discord.ext import commands
+from io import StringIO
+from cogs.utils import checks
+import logging
+import traceback
+
+loop = asyncio.get_event_loop()
+
+log = logging.getLogger()
+log.setLevel(logging.WARNING)
+handler = logging.FileHandler(filename='gary.log', encoding='utf-8', mode='a')
+formatter = logging.Formatter("{asctime} - [{levelname}]: {message}", style="{")
+handler.setFormatter(formatter)
+log.addHandler(handler)
+
+log.info("Bot instance started.")
+
+def log_exc(ctx, error):
+    st = StringIO()
+    if ctx.command:
+        print("Command '%{}':".format(ctx.command.qualified_name))
+        log.error("Command '%{}':".format(ctx.command.qualified_name))
+    
+    print('{0.__class__.__name__}: {0}'.format(error), file=sys.stderr)
+    traceback.print_tb(error.__traceback__, file=sys.stderr)
+    traceback.print_tb(error.__traceback__, file=st)
+
+    log.exception('{0.__class__.__name__}: {0}'.format(error), exc_info=error)
+
+    if ctx.author.id == 304980605207183370:
+        if isinstance(error, commands.CommandInvokeError):
+            error = error.original
+        exc_output = "The last command triggered an exception:\n```py\n{0.__class__.__name__}: {0}\n{1}```".format(
+            error, st.getvalue() if len(st.getvalue()) < 2000 else "")
+        ctx.bot.loop.create_task(ctx.message.author.send(exc_output))
+
 
 client = discord.Client()
 bot = commands.Bot(command_prefix='%', pm_help=True)
@@ -13,13 +49,14 @@ extensions = ['cogs.quotes',
               'cogs.users',
               'cogs.general',
               'cogs.interpreter',
+              'cogs.markov',
               'cogs.ud',
-              'cogs.lewd',
               'cogs.trivia',
               'cogs.lastfm',
               'cogs.imgur',
               'cogs.gameinfo',
-              'cogs.help']
+              'cogs.help',
+              'cogs.eval']
 
 @bot.event
 async def on_ready():
@@ -49,9 +86,12 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.MissingRequiredArgument):
         er = "Missing Arguments"
         st = "Your command invocation is missing required arguments."
+    elif isinstance(error, commands.BadArgument):
+        er = "Invalid Argument"
+        st = "You used an invalid argument in your command invocation."
     else:
-        er = "Error"
-        st = "`{}`".format(error)
+        log_exc(ctx, error)
+        return
 
     emb.add_field(name=er, value=st)
     emb.set_footer(text="If you believe you should not be getting this error, ping or DM Sigma#0472.")
@@ -74,7 +114,38 @@ async def on_member_join(member):
     if role:
         await member.add_roles(role)
 
+@bot.listen()
+async def timer_update(secs):
+    return secs
+
+async def start_timer(bot):
+
+    await bot.wait_until_ready()
+
+    bot.seconds = 0
+    seconds = 0
+
+    while True:
+        bot.dispatch("timer_update", seconds)
+        await timer_update(seconds)
+        seconds += 1
+        bot.seconds = seconds
+        await asyncio.sleep(1)
+
+@bot.command(aliases=['debug'])
+@checks.is_superuser()
+async def set_debug(ctx):
+
+    if logging.getLogger().getEffectiveLevel() != logging.INFO:
+        log.setLevel(logging.INFO)
+        await ctx.send("Set debug mode.")
+    else:
+        log.setLevel(logging.WARNING)
+        await ctx.send("Unset debug mode.")
+
+
 @bot.command()
+@checks.is_superuser()
 async def load_cog(ctx, arg):
     if ctx.author.id == 304980605207183370:
         cog = 'cogs.' + arg
@@ -87,6 +158,7 @@ async def load_cog(ctx, arg):
         await ctx.send("You do not have the correct permissions to use this command.")
 
 @bot.command()
+@checks.is_superuser()
 async def unload_cog(ctx, arg):
     if ctx.author.id == 304980605207183370:
         cog = 'cogs.' + arg
@@ -103,5 +175,7 @@ if __name__ == '__main__':
     for e in extensions:
         bot.load_extension(e)
 
+    bot.loop.create_task(start_timer(bot))
 
-bot.run(key.key)
+
+    bot.run(key.key)

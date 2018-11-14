@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import random
 import inspect
+import subprocess
+import cogs.utils.key as key
 from cogs.utils import checks
 
 
@@ -10,63 +12,28 @@ class GeneralCog:
         self.bot = bot
 
     @commands.command()
-    async def userinfo(self, ctx, *args):
+    async def userinfo(self, ctx, *, author: discord.Member = None):
         await ctx.channel.trigger_typing()
 
-        author = ctx.author
-
-        if args:
-            author = None
-            if args[0][0:3] == "<@!":
-                author = ctx.guild.get_member(int(args[0][3:len(args[0])-1]))
-            elif args[0][0:2] == "<@":
-                author = ctx.guild.get_member(int(args[0][2:len(args[0])-1]))
-            else:
-                args = " ".join(args)
-                for m in ctx.guild.members:
-                    if args == m.name + "#" + m.discriminator:
-                        author = m
-                        break
-            if author == None:
-                await ctx.send("User not found in this server.")
-                return
+        if not author:
+            author = ctx.author
 
         msg = discord.Embed(colour=author.color)
-        msg.set_author(name=author.name, icon_url=author.avatar_url)
+        msg.set_author(name=author.name + "#" + str(author.discriminator), icon_url=author.avatar_url)
         msg.set_thumbnail(url=author.avatar_url)
-        msg.add_field(name="User ID", value=author.name + "#" + str(author.discriminator))
-        msg.set_footer(text="For help with Gary's commands, use %help.")
         msg.add_field(name="Nickname", value=author.nick)
+        msg.add_field(name="User ID", value=author.id)
+        msg.set_footer(text="For help with Gary's commands, use %help.")
         msg.add_field(name="Join Date", value=str(author.joined_at)[:10])
         msg.add_field(name="Account Created", value=str(author.created_at)[:10])
-        msg.add_field(name="Status", value=str(author.status).title())
+        msg.add_field(name="Status", value=str(author.status).title(), inline=False)
         msg.add_field(name="Roles", value=", ".join(r.name for r in reversed(author.roles)))
 
         await ctx.send(embed=msg)
 
-    @staticmethod
-    async def _err_catch(ctx, err, format, desc):
-        channel = ctx.message.author.dm_channel
-        if channel == None:
-            channel = await ctx.message.author.create_dm()
-        x = discord.Embed(colour=0x33B5E5, title=err, description='`' + format + '`\n')
-        x.add_field(name=desc, value="\u200b")
-        x.set_author(name="Gary Command Error", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
-        x.set_footer(text="Please use %help or DM Sigma#0472 with any further questions.")
-        await channel.send(embed = x)
-
     @commands.command()
-    async def roll(self, ctx, *args):
-        if (len(args) == 0):
-            await ctx.send(random.randint(1,6))
-        else:
-            try:
-                await ctx.send(random.randint(1,int(args[0])))
-            except ValueError:
-                err = "Invalid argument type."
-                format = "%roll [# sides (optional)]"
-                desc = "The %roll command displays a random number in the given range (six by default)."
-                await self._err_catch(ctx, err, format, desc)
+    async def roll(self, ctx, arg: int = 6):
+        await ctx.send(random.randint(1, arg))
 
     @commands.command()
     async def flip(self, ctx):
@@ -88,21 +55,17 @@ class GeneralCog:
                      "My sources say no.",
                      "Outlook not so good.",
                      "Very doubtful"]
+
         await ctx.send(random.choice(responses))
 
     @commands.command()
     async def bigtext(self, ctx, *, args):
+
         if ctx.guild.id == 342025948113272833:
             channel = self.bot.get_channel(427941608428797954)
         elif ctx.guild.id == 484966083795746816:
             channel = self.bot.get_channel(485964599401644045)
 
-        if not args:
-            err = "Missing required argument."
-            format = "%echo [string]"
-            desc = "The %echo command repeats the text inputted by the user.."
-            await self._err_catch(ctx, err, format, desc)
-            return
 
         echo_log = discord.Embed(colour=0x33B5E5)
         echo_log.set_author(name="Gary's Echo Log", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
@@ -127,7 +90,12 @@ class GeneralCog:
 
         str = "".join(str)
         await ctx.send(str)
-        await channel.send(embed=echo_log)
+
+        try:
+            await channel.send(embed=echo_log)
+        except:
+            pass
+
         await ctx.message.delete()
 
 
@@ -137,13 +105,6 @@ class GeneralCog:
             channel = self.bot.get_channel(427941608428797954)
         elif ctx.guild.id == 484966083795746816:
             channel = self.bot.get_channel(485964599401644045)
-
-        if not args:
-            err = "Missing required argument."
-            format = "%echo [string]"
-            desc = "The %echo command repeats the text inputted by the user.."
-            await self._err_catch(ctx, err, format, desc)
-            return
 
         echo_log = discord.Embed(colour=0x33B5E5)
         echo_log.set_author(name="Gary's Echo Log", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
@@ -161,68 +122,25 @@ class GeneralCog:
         await ctx.message.delete()
 
     @commands.command()
-    async def eval(self, ctx, *, code : str):
-        is_mod = False
-        for x in ctx.author.roles:
-            if (x.name == "Auxiliary"):
-                is_mod = True
-                break
-        if is_mod or ctx.author.id == 304980605207183370:
-
-            # Credit to Rapptz for the majority of this block of code
-
-            code = code.strip('` ')
-            python = '```py\n{}\n```'
-            result = None
-
-            env = {
-                'bot': self.bot,
-                'ctx': ctx,
-                'message': ctx.message,
-                'guild': ctx.guild,
-                'channel': ctx.channel,
-                'author': ctx.author
-            }
-
-            env.update(globals())
-
-            try:
-                result = eval(code, env)
-                if inspect.isawaitable(result):
-                    result = await result
-            except Exception as e:
-                 await ctx.send(python.format(type(e).__name__ + ': ' + str(e)))
-                 return
-
-            if len(python.format(result)):
-                await ctx.send("Output greater than 2000 characters.")
-                return
-            await ctx.send(python.format(result))
-
-        else:
-            await ctx.send("You do not have the correct permissions to use this command.")
-
-    @commands.command()
     async def vote(self, ctx, *, args):
         if ctx.guild.id == 342025948113272833:
             channel = self.bot.get_channel(427941608428797954)
         elif ctx.guild.id == 484966083795746816:
             channel = self.bot.get_channel(485964599401644045)
 
-        if not args:
-            err = "Missing required argument."
-            format = "%vote [string]"
-            desc = "The %vote command initiates a vote using the 👍, 👎, and 🤔 reactions."
-            await self._err_catch(ctx, err, format, desc)
-            return
-
         echo_log = discord.Embed(colour=0x33B5E5)
         echo_log.set_author(name="Gary's Echo Log", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
         echo_log.add_field(name="Author", value=ctx.author.mention, inline=False)
         echo_log.add_field(name="Type", value="Vote", inline=False)
         echo_log.add_field(name="Message", value=args)
+
         msg = await ctx.send(args)
-        await channel.send(embed=echo_log)
+
+        try:
+            await channel.send(embed=echo_log)
+        except:
+            pass
+
         await ctx.message.delete()
         await msg.add_reaction('👍')
         await msg.add_reaction('👎')
@@ -259,7 +177,7 @@ class GeneralCog:
 
     @commands.command()
     async def role(self, ctx, *args):
-        if args[1].lower() not in ['nsfw']:
+        if args[1].lower() not in ['nsfw', 'vc', 'splat', 'spoilers']:
             await ctx.send("This role cannot be added by Gary.")
             return
 
@@ -269,35 +187,80 @@ class GeneralCog:
 
         guild = self.bot.get_guild(484966083795746816)
 
-        if args[0] == 'add':
-            for r in guild.roles:
-                if r.name.lower() == args[1].lower():
-
-                    try:
-                        user = guild.get_member(ctx.author.id)
-                    except:
-                        await ctx.send("You are not currently in The Bat Cave.")
-                        return
-
-                    await user.add_roles(r)
-                    await ctx.send("The `{}` role as been added!".format(r.name))
-                    return
-
-        elif args[0] == 'remove':
-            for r in guild.roles:
-                if r.name.lower() == args[1].lower():
-
-                    try:
-                        user = guild.get_member(ctx.author.id)
-                    except:
-                        await ctx.send("You are not currently in The Bat Cave.")
-                        return
-
-                    await user.remove_roles(r)
-                    await ctx.send("The `{}` role as been removed!".format(r.name))
-                    return
+        if args[1].lower() == 'vc':
+            assigned_role = 'vc losers'
         else:
-            await ctx.send("The given role does not exist in The Bat Cave.")
+            assigned_role = args[1].lower()
+
+        for r in guild.roles:
+            if r.name.lower() == assigned_role:
+
+                try:
+                    user = guild.get_member(ctx.author.id)
+                except:
+                    await ctx.send("You are not currently in The Bat Cave.")
+                    return
+
+                if args[0] == 'add':
+                    await user.add_roles(r)
+                    await ctx.send("The `{}` role has been added!".format(r.name))
+
+                elif args[0] == 'remove':
+                    await user.remove_roles(r)
+                    await ctx.send("The `{}` role has been removed!".format(r.name))
+                else:
+                    await ctx.send("Invalid argument. Only `add` and `remove` may be used.")
+
+
+    @commands.command()
+    async def mash(self, ctx, *args):
+        keys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c']
+
+        m = []
+        lng = random.randint(8,25)
+
+        for _ in range(lng):
+            m.append(random.choice(keys))
+        
+        if args:
+
+            if args[0].lower() == 'caps':
+                m = "".join(m).upper()
+
+            elif args[0].lower() == 'random':
+                
+                for x in range(len(m)):
+                    case = random.choice(["m[x].upper()", "m[x].lower()"])
+                    m[x] = eval(case)
+
+                m = "".join(m)
+
+            else:
+                m = "".join(m)
+
+        else: 
+            m = "".join(m)
+                
+        await ctx.send(m)
+
+
+    @commands.command()
+    @checks.is_superuser()
+    async def shutdown(self, ctx):
+        await ctx.send("Shutting down...")
+        await self.bot.logout()
+
+
+    @commands.command()
+    @checks.is_superuser()
+    async def fetch_log(self, ctx):
+        await ctx.author.send("```css\n{}```".format(subprocess.run(['tail', 'gary.log'], stdout=subprocess.PIPE, encoding='utf-8').stdout))
+
+
+    @commands.command()
+    @checks.is_superuser()
+    async def restart(self, ctx):
+        await self.bot.logout()
 
 
 def setup(bot):

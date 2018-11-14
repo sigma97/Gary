@@ -22,21 +22,17 @@ class SpriteCog:
         elif (int(arg) < 100):
             arg = "0" + str(arg)
         x = "https://serebii.net/supermysterydungeon/pokemon/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
-        await ctx.send(embed = y)
+        await ctx.send(x)
 
     @commands.command()
     async def rb(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/red-blue/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
         if arg in pokemon:
             if (int(pokemon[arg]) > 151):
                 await ctx.send("This Pokemon did not exist in Red/Blue.")
                 return
-            await ctx.send(embed = y)
+            await ctx.send(x)
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
@@ -44,13 +40,11 @@ class SpriteCog:
     async def yellow(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/yellow/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
         if arg in pokemon:
             if (int(pokemon[arg]) > 151):
                 await ctx.send("This Pokemon did not exist in Yellow.")
                 return
-            await ctx.send(embed = y)
+            await ctx.send(x)
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
@@ -58,13 +52,11 @@ class SpriteCog:
     async def silver(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/silver/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
         if arg in pokemon:
             if (int(pokemon[arg]) > 251):
                 await ctx.send("This Pokemon did not exist in Silver.")
                 return
-            await ctx.send(embed = y)
+            await ctx.send(x)
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
@@ -72,13 +64,11 @@ class SpriteCog:
     async def gold(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/gold/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
         if arg in pokemon:
             if (int(pokemon[arg]) > 251):
                 await ctx.send("This Pokemon did not exist in Gold.")
                 return
-            await ctx.send(embed = y)
+            await ctx.send(x)
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
@@ -86,13 +76,11 @@ class SpriteCog:
     async def crystal(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/crystal/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
         if arg in pokemon:
             if (int(pokemon[arg]) > 251):
                 await ctx.send("This Pokemon did not exist in Crystal.")
                 return
-            await ctx.send(embed = y)
+            await ctx.send(x)
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
@@ -100,41 +88,31 @@ class SpriteCog:
     async def rse(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/ruby-sapphire/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
-        await ctx.send(embed = y)
+        await ctx.send(x)
 
     @commands.command()
     async def frlg(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/firered-leafgreen/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
-        await ctx.send(embed = y)
+        await ctx.send(x)
 
     @commands.command()
     async def dppt(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/diamond-pearl/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
-        await ctx.send(embed = y)
+        await ctx.send(x)
 
     @commands.command()
     async def hgss(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/heartgold-soulsilver/normal/" + arg + ".png"
-        y = discord.Embed()
-        y.set_image(url=x)
-        await ctx.send(embed = y)
+        await ctx.send(x)
 
     @commands.command()
     async def bw(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/black-white/anim/normal/" + arg + ".gif"
-        y = discord.Embed()
-        y.set_image(url=x)
-        await ctx.send(embed = y)
+        await ctx.send(x)
 
     @commands.command()
     async def xy(self, ctx, arg):
@@ -153,9 +131,7 @@ class SpriteCog:
     @staticmethod
     async def _xysm_helper(ctx, arg):
         x = "https://play.pokemonshowdown.com/sprites/xyani/" + arg + ".gif"
-        y = discord.Embed()
-        y.set_image(url=x)
-        await ctx.send(embed = y)
+        await ctx.send(x)
 
 def setup(bot):
     bot.add_cog(SpriteCog(bot))
