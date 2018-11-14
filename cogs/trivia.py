@@ -1,3 +1,8 @@
+'''
+Trivia cog utilizing a repository of over 150k Jeopardy questions. May be
+turned into a server game in the future.
+'''
+
 import discord
 from discord.ext import commands
 import requests
@@ -19,6 +24,7 @@ class TriviaCog:
         def check(m):
             return m.content.lower() == 'done' and m.author == ctx.author
 
+        # Times out after 30 seconds and posts answer
         try:
             await self.bot.wait_for('message', timeout=30.0, check=check)
         except asyncio.TimeoutError:

@@ -1,3 +1,7 @@
+'''
+Returns random images from specific Imgur albums created by users.
+'''
+
 import discord
 from discord.ext import commands
 from imgurpython import ImgurClient
@@ -12,6 +16,7 @@ class ImgurCog:
         self.bot = bot
         self.client = ImgurClient(client_id, client_key)
 
+    # Actually returns the image
     async def _images(self, ctx, id):
 
         try:
@@ -22,6 +27,10 @@ class ImgurCog:
 
         image = random.choice(album)
         await ctx.send(image.link)
+
+
+    ''' The following functions read in the command and send the unique char
+        string of the album associated with the command to _images '''
 
     @commands.command()
     async def baned(self, ctx):

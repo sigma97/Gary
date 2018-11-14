@@ -1,3 +1,8 @@
+'''
+Stores various game information on each user such as PSN IDs, XBL Gamertags,
+Friend Codes, etc.
+'''
+
 import discord
 from discord.ext import commands
 import psycopg2

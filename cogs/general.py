@@ -1,3 +1,7 @@
+'''
+Cog containing general/miscellaneous commands.
+'''
+
 import discord
 from discord.ext import commands
 import random
@@ -11,6 +15,7 @@ class GeneralCog:
     def __init__(self, bot):
         self.bot = bot
 
+    # Returns information on the member
     @commands.command()
     async def userinfo(self, ctx, *, author: discord.Member = None):
         await ctx.channel.trigger_typing()
@@ -31,15 +36,18 @@ class GeneralCog:
 
         await ctx.send(embed=msg)
 
+    # Rolls a die
     @commands.command()
     async def roll(self, ctx, arg: int = 6):
         await ctx.send(random.randint(1, arg))
 
+    # Flips a coin
     @commands.command()
     async def flip(self, ctx):
         await ctx.send(random.choice(["Heads", "Tails"]))
 
-    @commands.command()
+    # Magic 8-ball
+    @commands.command(aliases=['8ball'])
     async def oracle(self, ctx):
         responses = ["It is certain.",
                      "It is decidedly so.",
@@ -58,6 +66,7 @@ class GeneralCog:
 
         await ctx.send(random.choice(responses))
 
+    # Returns the given string rewritten using big emojis and logs the user that sent it
     @commands.command()
     async def bigtext(self, ctx, *, args):
 
@@ -98,7 +107,7 @@ class GeneralCog:
 
         await ctx.message.delete()
 
-
+    # Returns the given string, deletes the message by the author, logs the author and string
     @commands.command()
     async def echo(self, ctx, *, args):
         if ctx.guild.id == 342025948113272833:
@@ -121,6 +130,7 @@ class GeneralCog:
 
         await ctx.message.delete()
 
+    # Initiates a vote using 👍, 👎, and 🤔, deletes the user's message, then logs it
     @commands.command()
     async def vote(self, ctx, *, args):
         if ctx.guild.id == 342025948113272833:
@@ -146,6 +156,7 @@ class GeneralCog:
         await msg.add_reaction('👎')
         await msg.add_reaction('🤔')
 
+    # Deletes all of the message in a channel
     @commands.command(hidden=True)
     async def nuke(self, ctx):
         is_mod = False
@@ -155,6 +166,7 @@ class GeneralCog:
         if (ctx.channel.name == "the_wall" and is_mod):
             await ctx.channel.purge()
 
+    # Yells at Mary
     @checks.is_trh()
     @commands.command()
     async def clearthepins(self, ctx):
@@ -166,15 +178,18 @@ class GeneralCog:
         if (is_mod):
             await ctx.send("<@!147488112770023424> CLEAR THE DAMN PINS")
 
+    # Random emoji
     @commands.command()
     async def feed_tat(self, ctx):
         await ctx.send(str(random.choice(self.bot.emojis)))
 
+    # Banana
     @checks.is_trh()
     @commands.command()
     async def feed_nape(self, ctx):
         await ctx.send(":banana:")
 
+    # Adds/Removes a valid role from the user in TBC
     @commands.command()
     async def role(self, ctx, *args):
         if args[1].lower() not in ['nsfw', 'vc', 'splat', 'spoilers']:
@@ -211,7 +226,7 @@ class GeneralCog:
                 else:
                     await ctx.send("Invalid argument. Only `add` and `remove` may be used.")
 
-
+    # Returns a randomized string of characters with or without caps
     @commands.command()
     async def mash(self, ctx, *args):
         keys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c']
@@ -243,24 +258,18 @@ class GeneralCog:
                 
         await ctx.send(m)
 
-
+    # Shuts down Gary
     @commands.command()
     @checks.is_superuser()
     async def shutdown(self, ctx):
         await ctx.send("Shutting down...")
         await self.bot.logout()
 
-
+    # Fetches the tail of Gary's log and DMs it to me
     @commands.command()
     @checks.is_superuser()
     async def fetch_log(self, ctx):
         await ctx.author.send("```css\n{}```".format(subprocess.run(['tail', 'gary.log'], stdout=subprocess.PIPE, encoding='utf-8').stdout))
-
-
-    @commands.command()
-    @checks.is_superuser()
-    async def restart(self, ctx):
-        await self.bot.logout()
 
 
 def setup(bot):

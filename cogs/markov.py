@@ -1,3 +1,8 @@
+'''
+INCOMPLETE: Cog for generating markov strings using text files saved for each
+user (composed of the messages they've sent in the server).
+'''
+
 import discord
 from discord.ext import commands
 import markovify

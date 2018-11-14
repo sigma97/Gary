@@ -1,3 +1,7 @@
+'''
+Cog for finding words on Urban Dictionary, given or random.
+'''
+
 import discord
 from discord.ext import commands
 import urbandictionary as u
@@ -9,6 +13,7 @@ class UDCog:
     def __init__(self, bot):
         self.bot = bot
 
+    # Chooses random word from UD
     @staticmethod
     async def _random_word(ctx):
 
@@ -31,6 +36,7 @@ class UDCog:
         
         await ctx.send(embed = x)
 
+    # Finds the given word from UD
     @staticmethod
     async def _given_word(ctx, args):
         
@@ -64,6 +70,7 @@ class UDCog:
             else:
                 await ctx.send("This word's definitions are too long for Discord.")
 
+    # Reads in a word/phrase, if none is given, defaults to a random word.
     @commands.command()
     async def ud(self, ctx, *args):
 

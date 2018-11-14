@@ -1,3 +1,9 @@
+'''
+Cog for saving funny/memorable quotes by users in the server in a database.
+Returns one of these quotes at random when %quote is used, but users can also
+find quotes using their IDs and the author.
+'''
+
 import discord
 from discord.ext import commands
 import psycopg2
@@ -11,6 +17,7 @@ class QuoteCog:
     def __init__(self, bot):
         self.bot = bot
 
+    # Finds quotes by the given user
     @commands.command()
     async def quotes(self, ctx, *args):
         if ctx.guild.id == 342025948113272833 or ctx.guild.id == 410225794904883202:
@@ -43,7 +50,7 @@ class QuoteCog:
                 emb.add_field(name="IDs", value=y)
                 await ctx.send(embed = emb)
 
-
+    # Finds quote with a given ID. Returns one at random if no ID is given.
     @commands.command()
     async def quote(self, ctx, *args: int):
 
@@ -65,7 +72,7 @@ class QuoteCog:
             x = rows[0]
         await ctx.send('"' + x[1] + '" - ' + x[0])
 
-    
+    # Adds a quote given user and the quote surrounded by ""
     @commands.command()
     async def add(self, ctx, arg1, arg2):
 
@@ -97,7 +104,7 @@ class QuoteCog:
         else:
             await ctx.send("You do not have the correct permissions to use this command.")
 
- 
+    # Deletes a quote given the ID
     @commands.command()
     async def delete(self, ctx, arg):
 
@@ -124,7 +131,7 @@ class QuoteCog:
         else:
             await ctx.send("You do not have the correct permissions to use this command.")
 
-
+    # DMs user all of the quotes and IDs (use sparingly, may produce a lot of messages)
     @commands.command()
     async def ids(self, ctx):
 

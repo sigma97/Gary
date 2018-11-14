@@ -1,3 +1,7 @@
+'''
+Cog that defines Gary's in-depth help menu system.
+'''
+
 import discord
 from discord.ext import commands
 
@@ -6,6 +10,7 @@ class HelpCog:
         self.bot = bot
         self.menus = ["last.fm", "gameinfo", "imgur", "quotes", "sprites"]
 
+    # Help menu having to do with the Last.fm cog
     @staticmethod
     async def _lastfm_help(channel):
 
@@ -23,6 +28,7 @@ class HelpCog:
         await channel.send(embed=msg)
 
 
+    # Help menu having to do with the Gameinfo cog
     @staticmethod
     async def _gameinfo_help(channel):
 
@@ -40,6 +46,7 @@ class HelpCog:
         await channel.send(embed=msg)
 
 
+    # Help menu having to do with the Imgur cog
     @staticmethod
     async def _imgur_help(channel):
 
@@ -59,6 +66,7 @@ class HelpCog:
         await channel.send(embed=msg)
 
 
+    # Help menu having to do with the Quotes cog
     @staticmethod
     async def _quotes_help(channel):
 
@@ -76,6 +84,7 @@ class HelpCog:
         await channel.send(embed=msg)
 
 
+    # Help menu having to do with the Sprites cog
     @staticmethod
     async def _sprite_help(channel):
 
@@ -93,6 +102,7 @@ class HelpCog:
         await channel.send(embed=msg)
 
 
+    # Routes to the appropriate help function
     async def _help_redirect(self, channel, args):
         if args[0] == 'last.fm':
             await self._lastfm_help(channel)
@@ -107,6 +117,8 @@ class HelpCog:
         else:
             return
 
+
+    # Base command, given args redirects to the appropriate help menu
     @commands.command()
     async def help(self, ctx, *args):
         channel = ctx.message.author.dm_channel
@@ -130,8 +142,7 @@ class HelpCog:
 `%flip`\nReturns "Heads" or "Tails" at random.\n
 `%feed_vap`\nFeeds Vap.\n
 `%oracle`\nMagic 8-Ball.\n
-`%ud [word or phrase (optional)]`\nReturns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition.\n
-`%e621 [query]`\nReturns the top e621 image of the given query. Can only be used in #bot_spam (SFW) and #nsfw_pics (NSFW).\n\u200b"""
+`%ud [word or phrase (optional)]`\nReturns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition.\n\u200b"""
 
         msg = discord.Embed(description="*The following is a list of general commands that can be used with Gary.*", colour=0x33B5E5)
         msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")

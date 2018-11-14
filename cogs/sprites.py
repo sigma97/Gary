@@ -1,3 +1,7 @@
+'''
+Returns sprites from different Pokemon games.
+'''
+
 import discord
 from discord.ext import commands
 from cogs.utils.pokemon import pokemon
@@ -6,6 +10,7 @@ class SpriteCog:
     def __init__(self, bot):
         self.bot = bot
 
+    # Pokemon Mystery Dungeon sprites
     @commands.command()
     async def pmd(self, ctx, arg):
         if (int(arg) < 1 or int(arg) > 807):
@@ -24,6 +29,7 @@ class SpriteCog:
         x = "https://serebii.net/supermysterydungeon/pokemon/" + arg + ".png"
         await ctx.send(x)
 
+    # Pokemon Red/Blue sprites
     @commands.command()
     async def rb(self, ctx, arg):
         arg = arg.lower()
@@ -36,6 +42,7 @@ class SpriteCog:
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
+    # Pokemon Yellow sprites
     @commands.command()
     async def yellow(self, ctx, arg):
         arg = arg.lower()
@@ -48,6 +55,7 @@ class SpriteCog:
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
+    # Pokemon Silver sprites
     @commands.command()
     async def silver(self, ctx, arg):
         arg = arg.lower()
@@ -60,6 +68,7 @@ class SpriteCog:
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
+    # Pokemon Gold sprites
     @commands.command()
     async def gold(self, ctx, arg):
         arg = arg.lower()
@@ -72,6 +81,7 @@ class SpriteCog:
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
+    # Pokemon Crystal sprites
     @commands.command()
     async def crystal(self, ctx, arg):
         arg = arg.lower()
@@ -84,36 +94,42 @@ class SpriteCog:
         else:
             await ctx.send("Your input is either not a Pokemon or not yet added to the list of Pokemon.")
 
+    # Pokemon Ruby/Sapphire/Emerald sprites
     @commands.command()
     async def rse(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/ruby-sapphire/normal/" + arg + ".png"
         await ctx.send(x)
 
+    # Pokemon FireRed/LeafGreen sprites
     @commands.command()
     async def frlg(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/firered-leafgreen/normal/" + arg + ".png"
         await ctx.send(x)
 
+    # Pokemon Diamond/Pearl/Platinum sprites
     @commands.command()
     async def dppt(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/diamond-pearl/normal/" + arg + ".png"
         await ctx.send(x)
 
+    # Pokemon HeartGold/SoulSilver sprites
     @commands.command()
     async def hgss(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/heartgold-soulsilver/normal/" + arg + ".png"
         await ctx.send(x)
 
+    # Pokemon Black/White sprites
     @commands.command()
     async def bw(self, ctx, arg):
         arg = arg.lower()
         x = "https://img.pokemondb.net/sprites/black-white/anim/normal/" + arg + ".gif"
         await ctx.send(x)
 
+    # Pokemon X/Y models 
     @commands.command()
     async def xy(self, ctx, arg):
         arg = arg.lower()
@@ -123,6 +139,7 @@ class SpriteCog:
                 return
         await self._xysm_helper(ctx, arg)
 
+    # Pokemon Sun/Moon models
     @commands.command()
     async def sm(self, ctx, arg):
         arg = arg.lower()

@@ -1,3 +1,9 @@
+'''
+Credit to Rapptz for the majority of this cog.
+
+Evaluates a given code snippet.
+'''
+
 import textwrap
 import traceback
 from discord.ext import commands

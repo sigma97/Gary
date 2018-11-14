@@ -1,9 +1,13 @@
+'''
+Cog for finding artist, album, and track information using Last.fm and 
+Spotify's APIs.
+'''
+
 import discord
 from discord.ext import commands
 import requests
 import json
 import pylast
-import spotipy
 import logging
 from cogs.utils.spotify_key import client_id, API_KEY, API_SECRET
 
@@ -20,6 +24,7 @@ class LastfmCog:
 
         self.network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET)
     
+    # Uses the timer_update dispatch to refresh Spotify's token every hour.
     async def on_timer_update(self, seconds):
 
         if seconds % 3600 == 0 and seconds != 0:
@@ -34,6 +39,7 @@ class LastfmCog:
             self.token = token.json()
             
 
+    # Returns the given artist.
     @commands.command()
     async def artist(self, ctx, *, args):
         await ctx.channel.trigger_typing()
@@ -73,6 +79,8 @@ class LastfmCog:
         embed.set_footer(text="For help with Last.fm commands, use %help last.fm.")
         await ctx.send(embed=embed)
 
+
+    # Returns the top five albums by te given artist
     @commands.command()
     async def top_albums(self, ctx, *, args):
         await ctx.channel.trigger_typing()
@@ -101,6 +109,8 @@ class LastfmCog:
         embed.set_footer(text="For help with Last.fm commands, use %help last.fm.")
         await ctx.send(embed=embed)
 
+
+    # Returns the top tracks by the given artist
     @commands.command()
     async def top_tracks(self, ctx, *, args):
         await ctx.channel.trigger_typing()
@@ -129,6 +139,8 @@ class LastfmCog:
         embed.set_footer(text="For help with Last.fm commands, use %help last.fm.")
         await ctx.send(embed=embed)
 
+
+    # Returns a track listing from the given album/artist
     @commands.command()
     async def album(self, ctx, *, args):
         await ctx.channel.trigger_typing()
@@ -176,6 +188,8 @@ class LastfmCog:
         embed.set_footer(text="For help with Last.fm commands, use %help last.fm.")
         await ctx.send(embed=embed)
 
+
+    # Returns a preview of the given track (from spotify)
     @commands.command()
     async def track(self, ctx, *, args):
         await ctx.channel.trigger_typing()
