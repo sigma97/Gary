@@ -13,7 +13,7 @@ from cogs.utils.spotify_key import client_id, API_KEY, API_SECRET
 
 log = logging.getLogger()
 
-class LastfmCog:
+class LastfmCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         token = requests.post(

@@ -3,17 +3,18 @@ Trivia cog utilizing a repository of over 150k Jeopardy questions. May be
 turned into a server game in the future.
 '''
 
-import discord
-from discord.ext import commands
-import requests
 import json
 import asyncio
 import string
 import logging
+import requests
+
+import discord
+from discord.ext import commands
 
 log = logging.getLogger()
 
-class TriviaCog:
+class TriviaCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -22,7 +23,7 @@ class TriviaCog:
 
         # Define check for try/except
         def check(m):
-            return m.content.lower() == 'done' and m.author == ctx.author
+            return m.content.lower() == '%done' and m.author == ctx.author
 
         # Times out after 30 seconds and posts answer
         try:
@@ -72,7 +73,7 @@ class TriviaCog:
         embed = discord.Embed(colour=0x0070bc)
         embed.add_field(name="Value", value=str(data[0]['value']), inline=True)
         embed.add_field(name="Category", value=string.capwords(data[0]['category']['title']))
-        embed.add_field(name="Question", value=data[0]['question'])
+        embed.add_field(name="Question", value=data[0]['question'], inline=False)
         embed.set_author(name="Trivia", icon_url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0JfbhsC-kZOM8URtBLcqj08f8H3JtdbkEpBlCGemS5SqNhNay")
         await ctx.send(embed=embed)
         await self._ans(ctx, data)

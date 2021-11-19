@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from cogs.utils.pokemon import pokemon
 
-class SpriteCog:
+class SpriteCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

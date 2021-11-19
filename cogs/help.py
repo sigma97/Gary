@@ -5,7 +5,9 @@ Cog that defines Gary's in-depth help menu system.
 import discord
 from discord.ext import commands
 
-class HelpCog:
+import config
+
+class HelpCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.menus = ["last.fm", "gameinfo", "imgur", "quotes", "sprites"]
@@ -20,9 +22,9 @@ class HelpCog:
 `%album [album name] - [artist name]`\nDisplays information on the given album as well as a tracklist.\n
 `%track [track name] - [artist name]`\nDisplays a playable Spotify link to the given track.\n\u200b"""
 
-        msg = discord.Embed(description="*The following is a list of Last.fm commands that can be used with Gary.*", colour=0x33B5E5)
+        msg = discord.Embed(description="*The following is a list of Last.fm commands that can be used with Gary.*", colour=config.emb_color)
         msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
-        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        msg.set_author(name="Gary Help Menu", icon_url=config.emb_icon)
         msg.add_field(name="Last.fm Commands", value=lfm, inline=True)
 
         await channel.send(embed=msg)
@@ -36,9 +38,9 @@ class HelpCog:
 `%get [platform]`\nDisplays user's information on the given platform.\n
 `%set [platform] [arg]`\nAdds the given arg as information on the given platform for the user.\n\u200b"""
 
-        msg = discord.Embed(description="*The following is a list of game info commands that can be used with Gary.*", colour=0x33B5E5)
+        msg = discord.Embed(description="*The following is a list of game info commands that can be used with Gary.*", colour=config.emb_color)
         msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
-        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        msg.set_author(name="Gary Help Menu", icon_url=config.emb_icon)
         msg.add_field(name="Game Info Commands", value=gi, inline=True)
         msg.add_field(name="Valid Platforms", value="`psn`, `xblive`, `steam`, `switch`, `3ds`\n\u200b", inline=True)
         msg.add_field(name="__Note:__", value="Nintendo Switch and 3DS Friend Codes must be submitted with the following format: `XXXX-XXXX-XXXX`")
@@ -57,9 +59,9 @@ class HelpCog:
 `%escavalier` **or** `%esca`\nDisplays a random Escavalier image.\n
 `%serperior` **or** `%serp`, `%snek`\nDisplays a random Serperior image.\n\u200b"""
 
-        msg = discord.Embed(description="*The following is a list of Imgur commands that can be used with Gary.*", colour=0x33B5E5)
+        msg = discord.Embed(description="*The following is a list of Imgur commands that can be used with Gary.*", colour=config.emb_color)
         msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
-        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        msg.set_author(name="Gary Help Menu", icon_url=config.emb_icon)
         msg.add_field(name="Imgur Commands", value=im, inline=True)
         msg.add_field(name="__Note:__", value="To have an Imgur album added to Gary, ping or DM Sigma.")
         
@@ -76,9 +78,9 @@ class HelpCog:
 `%ids`\nDMs the user a list of quotes and their IDs.\n
 `%quotes [user]`\nDisplays all of the quotes and their IDs by the given user.\n\u200b"""
 
-        msg = discord.Embed(description="*The following is a list of quote commands that can be used with Gary.*", colour=0x33B5E5)
+        msg = discord.Embed(description="*The following is a list of quote commands that can be used with Gary.*", colour=config.emb_color)
         msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
-        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        msg.set_author(name="Gary Help Menu", icon_url=config.emb_icon)
         msg.add_field(name="Quote Commands", value=quotes, inline=True)
         
         await channel.send(embed=msg)
@@ -93,9 +95,9 @@ class HelpCog:
 `%rb`, `%yellow`, `%gold`, `%silver`, `%crystal`, `%rse`, `%frlg`, `%dppt`, `%hgss`, `%bw`, `%xy`, `%sm`.\n
 `%[user]`\nDisplays the pokemon commonly associated with the specified user.\n\u200b"""
 
-        msg = discord.Embed(description="*The following is a list of sprite commands that can be used with Gary.*", colour=0x33B5E5)
+        msg = discord.Embed(description="*The following is a list of sprite commands that can be used with Gary.*", colour=config.emb_color)
         msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
-        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        msg.set_author(name="Gary Help Menu", icon_url=config.emb_icon)
         msg.add_field(name="Sprite Commands", value=spr, inline=True)
         msg.add_field(name="__Note:__", value="If your name does not yet have a command and you would like one, DM Sigma with the pokemon you want.")
         
@@ -142,11 +144,12 @@ class HelpCog:
 `%flip`\nReturns "Heads" or "Tails" at random.\n
 `%feed_vap`\nFeeds Vap.\n
 `%oracle`\nMagic 8-Ball.\n
-`%ud [word or phrase (optional)]`\nReturns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition.\n\u200b"""
+`%ud [word or phrase (optional)]`\nReturns Urban Dictionary definition of supplied word. If no word is supplied, returns a random word and definition.\n
+`%e621 [query]`\nReturns the top e621 image of the given query. Can only be used in #bot_spam (SFW) and #nsfw_pics (NSFW).\n\u200b"""
 
-        msg = discord.Embed(description="*The following is a list of general commands that can be used with Gary.*", colour=0x33B5E5)
+        msg = discord.Embed(description="*The following is a list of general commands that can be used with Gary.*", colour=config.emb_color)
         msg.set_footer(text="For any additional inquiries, please DM Sigma#0472.")
-        msg.set_author(name="Gary Help Menu", icon_url="https://i.neoseeker.com/mgv/297579/579/118/lord_garyVJPHT_display.png")
+        msg.set_author(name="Gary Help Menu", icon_url=config.emb_icon)
         msg.add_field(name="General Commands", value=gen, inline=True)
         await channel.send(embed = msg)
 

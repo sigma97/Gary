@@ -10,7 +10,7 @@ from os import path
 
 client = discord.Client()
 
-class MarkovCog:
+class MarkovCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

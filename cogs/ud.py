@@ -9,7 +9,7 @@ import logging
 
 log = logging.getLogger()
 
-class UDCog:
+class UDCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

@@ -11,7 +11,7 @@ from cogs.utils.imgur_key import client_id, client_key
 
 log = logging.getLogger()
 
-class ImgurCog:
+class ImgurCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.client = ImgurClient(client_id, client_key)

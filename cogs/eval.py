@@ -20,7 +20,7 @@ __copyright__ = "Copyright 2018 Rapptz"
 conn = psycopg2.connect(dbname="quotes")
 cursor = conn.cursor()
 
-class Eval:
+class Eval(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._last_result = None
@@ -86,6 +86,10 @@ class Eval:
             else:
                 self._last_result = ret
                 await ctx.send(f'```py\n{value}{ret}\n```')
+                
 
 def setup(bot):
     bot.add_cog(Eval(bot))
+
+def teardown(bot):
+    bot.remove_cog(Eval(bot))

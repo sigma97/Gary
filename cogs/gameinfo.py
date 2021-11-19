@@ -12,7 +12,7 @@ import re
 conn = psycopg2.connect(dbname="quotes")
 cursor = conn.cursor()
 
-class GameInfoCog:
+class GameInfoCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.platforms = {"psn": "psn_id",

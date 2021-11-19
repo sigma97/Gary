@@ -106,10 +106,11 @@ venv.bak/
 __pycache__/
 .vscode/
 cogs/__pycache__/
-cogs/utils/key.py
+config.py
 cogs/utils/spotify_key.py
 cogs/utils/imgur_key.py
 cogs/interpreter.py
 cogs/lewd.py
 cogs/users.py
+img/
 requirements.txt
